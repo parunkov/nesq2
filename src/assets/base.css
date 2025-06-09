@@ -1,0 +1,117 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --color-primary-100: #F7DEFF;
+  --color-primary-200: #EEBDFE;
+  --color-primary-300: #E39BFD;
+  --color-primary-400: #D777FB;
+  --color-primary-500: #C950F9;
+  --color-primary-600: #B90BF6;
+  --color-primary-700: #9218C0;
+  --color-primary-800: #6C1B8C;
+  --color-primary-900: #49185C;
+  --color-primary-1000: #27122F;
+  --color-gray-100: #F9F6FA;
+  --color-gray-200: #F4F1F5;
+  --color-gray-300: #EDEAEE;
+  --color-gray-400: #DFDDE0;
+  --color-gray-500: #BDBABE;
+  --color-gray-600: #9F9CA0;
+  --color-gray-700: #767377;
+  --color-gray-800: #636064;
+  --color-gray-900: #444145;
+  --color-gray-1000: #242125;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-warning: #FFFEF0;
+  --color-error: #FFEBEB;
+  --color-warning-border: #F4F3D5;
+  --color-error-border: #FFDECF;
+  --color-danger: #F60B0F;
+  --color-sub-header: #585858;
+
+  --color-gray-1: #F1F1F1;
+  --color-gray-2: #DFDFDF;
+  --color-gray-3: #D1D1D1;
+  --color-gray-4: #DFDDE0;
+  --color-gray-5: #F9F5FF;
+  --color-primary-1: #7F56D9;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  transition: color 0.5s,
+  background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  Oxygen,
+  Ubuntu,
+  Cantarell,
+  'Fira Sans',
+  'Droid Sans',
+  'Helvetica Neue',
+  sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Сброс стандартных таблиц */
+table {
+  border-collapse: collapse; /* убирает двойные границы между ячейками */
+  border-spacing: 0; /* убирает отступы между ячейками */
+  width: 100%; /* на всю ширину контейнера */
+  table-layout: auto; /* стандартное поведение ширины */
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+thead,
+tbody,
+tfoot,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  font: inherit;
+  text-align: left;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+/* Убираем обводки */
+th,
+td {
+  border: none;
+}
+
+/* Дополнительно — убираем жирный шрифт у th, если нужно */
+th {
+  font-weight: normal;
+}
+
+button {
+  all: unset;
+  display: block;
+  cursor: pointer;
+}
+
+input {
+  all: unset;
+  display: block;
+  cursor: pointer;
+}
