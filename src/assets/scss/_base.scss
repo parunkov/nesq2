@@ -1,0 +1,47 @@
+@use "./helpers" as *;
+
+html {
+  // scrollbar-gutter: stable;
+}
+
+body {
+  background: #49185c;
+  font-size: vw(15);
+}
+
+button,
+input,
+textarea {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+textarea {
+  resize: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.main {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: vw(330) vw(1170);
+
+  @include one {
+    grid-template-columns: 1fr;
+  }
+}
+
+button svg {
+  display: block;
+}
