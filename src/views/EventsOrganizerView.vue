@@ -18,7 +18,7 @@ eventStore.getEvents().then((res) => tableData.value.push(...res))
 const filteredEvents = ref(tableData.value)
 
 const eventsOnModeration = computed(() =>
-  filteredEvents.value.filter((el) => el.is_validated === undefined),
+  filteredEvents.value.filter((el) => el.is_validated === null),
 )
 const eventsBanned = computed(() => filteredEvents.value.filter((el) => el.is_validated === false))
 const eventApproved = computed(() => filteredEvents.value.filter((el) => el.is_validated === true))

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppDropDown from '@/components/AppDropDown.vue'
 import EventDates from '@/components/EventDates.vue'
-import PriceInputCreate from '@/components/PriceInputCreate.vue'
+import PriceInput from '@/components/PriceInput.vue'
 import { useModeratorStore } from '@/stores/moderator.ts'
 import type { Event } from '@/types/events.ts'
 import { computed } from 'vue'
@@ -57,7 +57,7 @@ const updateDates = (datesData: Event['datetime']) => {
           @update-dates="(datesData: Event['datetime']) => updateDates(datesData)"
         />
 
-        <PriceInputCreate v-model="prices" />
+        <PriceInput v-model="prices" />
       </div>
     </div>
   </div>

@@ -4,7 +4,6 @@ export type DateTime = {
 }
 
 export type DateTimeInfo = {
-  event_id: number
   from: string
   to?: string
 }
@@ -31,7 +30,7 @@ export type EventsFilter = {
 
 export type EventCard = {
   id: number
-  is_hiden: boolean
+  is_hidden: boolean
   is_validated: boolean | null
   user_id: string
   user_name: string
@@ -63,7 +62,7 @@ export type Event = {
 export type EventStatus = {
   id: number
   top?: boolean
-  is_hiden?: boolean
+  is_hidden?: boolean
   is_validated?: boolean
 }
 

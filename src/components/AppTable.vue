@@ -53,14 +53,32 @@ thead {
   font-weight: 500;
   white-space: nowrap;
   line-height: 1;
+  height: vw(38);
+  background-color: var(--color-gray-2);
 
   tr {
-    background-color: var(--color-gray-300);
+    background-color: var(--color-gray-2);
     text-align: start;
-    border: vw(1) solid var(--color-gray-400);
+    border: vw(1) solid var(--color-gray-3);
+    height: vw(38);
 
     th {
-      padding: vw(10);
+      border: vw(1) solid var(--color-gray-3);
+      border-bottom-color: var(--color-gray-3);
+      padding: vw(9) vw(10);
+
+      &:first-child {
+        border-left-color: var(--color-gray-3);
+      }
+
+      &:last-child {
+        border-right-color: var(--color-gray-3);
+      }
+
+
+      div {
+        font-weight: 600;
+      }
     }
 
     /* Скругляем углы: первая и последняя ячейка */

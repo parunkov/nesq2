@@ -2,6 +2,7 @@
 import { ref, nextTick } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import type { Event as EventType, DateTime } from '@/types/events.ts'
+import { useRoute } from 'vue-router'
 
 interface DateRow {
   startDate: string
@@ -18,6 +19,18 @@ const props = defineProps({
     default: [],
   },
 })
+
+function getModeFromRoute(): 'create' | 'edit' {
+  const route = useRoute()
+
+  // Например: /requests/create или /requests/edit/:id
+  if (route.path.includes('/create')) return 'create'
+  if (route.path.includes('/edit')) return 'edit'
+
+  return 'create' // fallback, если ничего не совпало
+}
+
+const mode = getModeFromRoute()
 
 const dates = ref<EventType['datetime']>(props.startDates)
 
@@ -175,6 +188,42 @@ const addDate = async () => {
     updateDatesAndEmit()
   }
 }
+
+const deleteRow = (rowindex: number) => {
+  rows.value.splice(rowindex, 1)
+  updateDatesAndEmit()
+}
+
+const shiftDate = (dateStr: string, days: number): string => {
+  if (!dateStr || dateStr.length !== 5) return ''
+  const [day, month] = dateStr.split('.').map(Number)
+  const date = new Date(2025, month - 1, day + days)
+  return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`
+}
+
+const duplicateRowWithShift = async (rowIndex: number, days: number) => {
+  const currentRow = rows.value[rowIndex]
+  const newStartDate = shiftDate(currentRow.startDate, days)
+  const newEndDate = currentRow.endDate ? shiftDate(currentRow.endDate, days) : ''
+
+  const newRow: DateRow = {
+    startDate: newStartDate,
+    startTime: currentRow.startTime,
+    endDate: newEndDate,
+    endTime: currentRow.endTime,
+    showActions: true,
+    showHint: false,
+  }
+  rows.value.splice(rowIndex + 1, 0, newRow)
+
+  await nextTick()
+  focusInput(rowIndex + 1, 'startTime')
+
+  // Если новая строка полностью заполнена — обновляем dates и эмитим
+  if (isRowComplete(newRow)) {
+    updateDatesAndEmit()
+  }
+}
 </script>
 
 <template>
@@ -265,16 +314,35 @@ const addDate = async () => {
             </p>
           </div>
 
-          <button
-            v-if="rowIndex !== 0"
-            class="button button--danger button--outline form-date__remove-btn"
-            @click="rows.splice(rowIndex, 1)"
-          />
+          <div v-if="mode === `create`" class="actions">
+            <AppButton
+              v-if="rowIndex !== 0"
+              outline
+              danger
+              class="button button--danger button--outline form-date__remove-btn"
+              @click="deleteRow(rowIndex)"
+            />
+            <AppButton mini @click="duplicateRowWithShift(rowIndex, 1)"> + День</AppButton>
+            <AppButton mini @click="duplicateRowWithShift(rowIndex, 7)"> + Неделя</AppButton>
+          </div>
+          <div v-else class="actions">
+            <AppButton
+              v-if="rowIndex !== 0"
+              outline
+              danger
+              class="button button--danger button--outline form-date__remove-btn"
+              @click="rows.splice(rowIndex, 1)"
+            />
+          </div>
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="form-date__actions" style="opacity: 1; transform: translateY(0)">
+      <div
+        v-if="mode === `edit`"
+        class="form-date__actions"
+        style="opacity: 1; transform: translateY(0)"
+      >
         <AppButton class="form-date__add-day-btn" @click="addDate"> + Добавить дату</AppButton>
       </div>
     </div>

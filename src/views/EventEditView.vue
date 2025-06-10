@@ -30,7 +30,8 @@ onMounted(() => {
 
 const saveEvent = () => {
   if (!currentEvent.value) return
-  currentEvent.value.datetime.forEach((el) => (el.event_id = Number(realId)))
+  /*  currentEvent.value.datetime.forEach((el) => (el.event_id = Number(realId)))*/
+  console.log(currentEvent.value)
   eventStore.updateEvent(currentEvent.value, Number(realId)).then(() => {
     if (!currentEvent.value) return
     eventStore.uploadImage(currentEvent.value.images, Number(realId))
@@ -41,8 +42,6 @@ const banEvent = () => {
   eventStore.updateEventsStatus([
     {
       id: Number(realId),
-      top: false,
-      is_hiden: false,
       is_validated: false,
     },
   ])

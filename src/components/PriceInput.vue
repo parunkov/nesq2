@@ -3,6 +3,8 @@ import { ref, nextTick, watch } from 'vue'
 import ToggleSwitch from '@/components/ToggleSwitch.vue'
 import type { Event } from '@/types/events.ts'
 import AppInput from '@/components/AppInput.vue'
+import AppButton from '@/components/AppButton.vue'
+import { useRoute } from 'vue-router'
 
 const eventPrices = defineModel<Event['prices']>()
 
@@ -21,6 +23,19 @@ const prices = ref<PriceValue[]>(
     : [{ value: '', id: Date.now() }],
 )
 
+function getModeFromRoute(): 'create' | 'edit' {
+  const route = useRoute()
+
+  // Например: /requests/create или /requests/edit/:id
+  if (route.path.includes('/create')) return 'create'
+  if (route.path.includes('/edit')) return 'edit'
+
+  return 'create' // fallback, если ничего не совпало
+}
+
+const mode = getModeFromRoute()
+
+const addPrice = () => prices.value.push({ value: '', id: Date.now() + Math.random() })
 // watch(
 //   () => eventPrices.value,
 //   () => {
@@ -37,6 +52,7 @@ const prices = ref<PriceValue[]>(
 const isFree = ref(false)
 
 const handlePriceInput = async (index: number) => {
+  if (mode === 'edit') return
   const price = prices.value[index]
 
   const isLast = index === prices.value.length - 1
@@ -109,6 +125,7 @@ watch(
               </template>
             </AppInput>
           </div>
+          <AppButton v-if="mode === `edit`" mini @click="addPrice">+ Цена</AppButton>
         </div>
 
         <div class="form-price__free-checkbox custom-checkbox">

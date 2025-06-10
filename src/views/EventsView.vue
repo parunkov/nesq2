@@ -23,7 +23,7 @@ const activeOnly = ref(false)
 const filterEvents = () => {
   filteredEvents.value = tableData.value.filter(
     (el) =>
-      (activeOnly.value === el.is_hiden || !activeOnly.value) &&
+      (activeOnly.value === el.is_hidden || !activeOnly.value) &&
       el.user_name.includes(searchQuery.value),
   )
 }
@@ -60,7 +60,7 @@ const deleteEvent = (id: number, index: number) => {
 
 const statusToogle = (
   event: EventCard,
-  data: { [key in keyof Pick<EventCard, 'is_hiden' | 'top'>]?: boolean },
+  data: { [key in keyof Pick<EventCard, 'is_hidden' | 'top'>]?: boolean },
 ) => {
   eventStore.updateEventsStatus([
     {
@@ -75,8 +75,8 @@ const goTo = (name: string) => router.push({ name: name })
 const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id: id } })
 
 const isHiddenChange = (row: EventCard, newValue: boolean) => {
-  row.is_hiden = newValue
-  statusToogle(row, { is_hiden: newValue })
+  row.is_hidden = newValue
+  statusToogle(row, { is_hidden: newValue })
 }
 </script>
 
@@ -124,7 +124,7 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
         </td>
         <td class="table-cell--active">
           <div>
-            <AppCheckbox :model-value="!row.is_hiden" @update:model-value="() => isHiddenChange(row, !row.is_hiden)"
+            <AppCheckbox :model-value="!row.is_hidden" @update:model-value="() => isHiddenChange(row, !row.is_hidden)"
               @click.stop />
           </div>
           <div class="mobile-text">Active</div>
@@ -178,7 +178,6 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
   font-weight: 500;
   line-height: vw(20);
   background-color: var(--color-gray-2);
-  height: vw(38);
 
   th {
     border: vw(1) solid var(--color-gray-3);
@@ -343,6 +342,16 @@ tr {
   }
 
   &--active {
+    &>div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @media (max-width: 991px) {
+        display: block;
+      }
+    }
+
     @media (max-width: 991px) {
       left: vw(18, $mobile);
       width: vw(80, $mobile);
@@ -350,6 +359,16 @@ tr {
   }
 
   &--top {
+    &>div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @media (max-width: 991px) {
+        display: block;
+      }
+    }
+
     @media (max-width: 991px) {
       left: vw(105, $mobile);
       width: vw(80, $mobile);

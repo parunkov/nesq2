@@ -44,7 +44,7 @@ const statusToogle = (event: EventCard) => {
     {
       id: event.id,
       is_validated: false,
-      is_hiden: event.is_hiden,
+      is_hidden: event.is_hidden,
       top: event.top,
     },
   ])
@@ -101,7 +101,7 @@ const statusToogle = (event: EventCard) => {
         </td>
         <td class="table-cell--active">
           <div>
-            <AppCheckbox @click="statusToogle(row)" v-model="row.is_hiden" />
+            <AppCheckbox @click="statusToogle(row)" v-model="row.is_hidden" />
           </div>
         </td>
         <td class="table-cell--top">
