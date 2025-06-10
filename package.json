@@ -15,6 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueup/vue-quill": "^1.2.0",
     "@vueuse/core": "^13.3.0",
     "axios": "^1.9.0",
     "js-cookie": "^3.0.5",
