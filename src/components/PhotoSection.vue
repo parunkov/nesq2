@@ -14,8 +14,8 @@ const images = ref<
 >(
   eventImages.value
     ? eventImages.value.map((el) => {
-        return { src: el, file: null }
-      })
+      return { src: el, file: null }
+    })
     : [],
 )
 //
@@ -114,17 +114,11 @@ watch(
       <div class="content-card__body">
         <div class="form-group">
           <div class="form-item">
-            <label for="imageUpload" class="form-item__label"
-              >Загрузите от 1 до 6 фотографий*</label
-            >
+            <label for="imageUpload" class="form-item__label">Загрузите от 1 до 6 фотографий*</label>
 
             <!-- Превью изображений -->
             <div class="form-file__inner">
-              <div
-                v-for="(image, index) in images"
-                :key="index"
-                class="form-file__card form-file__preview"
-              >
+              <div v-for="(image, index) in images" :key="index" class="form-file__card form-file__preview">
                 <img :src="image.src" alt="Preview" class="form-file__preview-img" />
                 <button class="form-file__delete-button" @click="removeImage(index)">
                   <img src="/icons/delete.svg" />
@@ -132,37 +126,17 @@ watch(
               </div>
 
               <div v-if="images.length < 6" class="form-file">
-                <div
-                  class="form-file__inner"
-                  @dragover.prevent="isDragOver = true"
-                  @dragleave.prevent="isDragOver = false"
-                  @drop.prevent="handleDrop"
-                  :class="{ 'form-file--dragover': isDragOver }"
-                >
+                <div class="form-file__inner" @dragover.prevent="isDragOver = true"
+                  @dragleave.prevent="isDragOver = false" @drop.prevent="handleDrop"
+                  :class="{ 'form-file--dragover': isDragOver }">
                   <label class="form-file__card form-file__upload-button" for="imageUpload">
-                    <input
-                      class="form-file__upload-input"
-                      type="file"
-                      id="imageUpload"
-                      accept="image/*"
-                      multiple
-                      @change="handleImageUpload"
-                    />
+                    <input class="form-file__upload-input" type="file" id="imageUpload" accept="image/*" multiple
+                      @change="handleImageUpload" />
                     <div class="form-file__icon">
-                      <svg
-                        width="30"
-                        height="30"
-                        viewBox="0 0 30 30"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
+                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                           d="M5.34012 25.9099L13.5858 17.6642C14.0808 17.1692 14.3283 16.9217 14.6137 16.8289C14.8648 16.7474 15.1352 16.7474 15.3863 16.8289C15.6717 16.9217 15.9192 17.1692 16.4142 17.6642L24.6049 25.8549M17.5 18.75L21.0858 15.1642C21.5808 14.6692 21.8283 14.4217 22.1137 14.3289C22.3648 14.2474 22.6352 14.2474 22.8863 14.3289C23.1717 14.4217 23.4192 14.6692 23.9142 15.1642L27.5 18.75M12.5 11.25C12.5 12.6307 11.3807 13.75 10 13.75C8.61929 13.75 7.5 12.6307 7.5 11.25C7.5 9.86929 8.61929 8.75 10 8.75C11.3807 8.75 12.5 9.86929 12.5 11.25ZM8.5 26.25H21.5C23.6002 26.25 24.6503 26.25 25.4525 25.8413C26.1581 25.4817 26.7317 24.9081 27.0913 24.2025C27.5 23.4003 27.5 22.3502 27.5 20.25V9.75C27.5 7.6498 27.5 6.5997 27.0913 5.79754C26.7317 5.09193 26.1581 4.51825 25.4525 4.15873C24.6503 3.75 23.6002 3.75 21.5 3.75H8.5C6.3998 3.75 5.3497 3.75 4.54754 4.15873C3.84193 4.51825 3.26825 5.09193 2.90873 5.79754C2.5 6.5997 2.5 7.6498 2.5 9.75V20.25C2.5 22.3502 2.5 23.4003 2.90873 24.2025C3.26825 24.9081 3.84193 25.4817 4.54754 25.8413C5.3497 26.25 6.3998 26.25 8.5 26.25Z"
-                          stroke="#444145"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
+                          stroke="#444145" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                       </svg>
                     </div>
                     <span class="form-file__caption">+ Фото</span>
@@ -189,8 +163,16 @@ watch(
   border-radius: vw(20);
   background: var(--color-white);
 
-  + .content-card {
+  @media (max-width: 991px) {
+    border-radius: vw(20, $mobile);
+  }
+
+  +.content-card {
     margin-top: vw(20);
+
+    @media (max-width: 991px) {
+      margin-top: vw(20, $mobile);
+    }
   }
 
   // .content-card__head
@@ -199,6 +181,12 @@ watch(
     padding: vw(10) vw(20);
     background: var(--color-gray-300);
     border-radius: vw(20) vw(20) 0 0;
+
+    @media (max-width: 991px) {
+      padding: vw(15, $mobile) vw(20, $mobile);
+      border-radius: vw(20, $mobile) vw(20, $mobile) 0 0;
+      border-top: none;
+    }
   }
 
   // .content-card__title
@@ -208,6 +196,12 @@ watch(
     font-size: vw(18);
     line-height: 1.67;
     color: var(--color-gray-1000);
+
+    @media (max-width: 991px) {
+      font-size: vw(22, $mobile);
+      line-height: vw(30, $mobile);
+      font-weight: 600;
+    }
   }
 }
 
@@ -230,6 +224,12 @@ watch(
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    @media (max-width: 991px) {
+      width: vw(130, $mobile);
+      height: vw(130, $mobile);
+      border-radius: vw(10, $mobile);
+    }
 
     @include one {
       width: vw(130);
@@ -280,6 +280,10 @@ watch(
 
   &__upload-button {
     border: vw(2) dashed var(--color-primary-300);
+
+    @media (max-width: 991px) {
+      border: vw(2, $mobile) dashed var(--color-primary-300);
+    }
   }
 
   // .form-file__icon
@@ -297,6 +301,11 @@ watch(
     font-size: vw(14);
     line-height: 1.43;
     color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      font-size: vw(14, $mobile);
+      line-height: vw(20, $mobile);
+    }
   }
 
   // .form-file__upload-input
@@ -317,8 +326,28 @@ watch(
 .form-group {
   padding: vw(20);
 
-  + .form-group {
+  @media (max-width: 991px) {
+    padding: vw(20, $mobile);
+  }
+
+  +.form-group {
     border-top: vw(1) solid var(--color-gray-300);
+  }
+}
+
+.form-item {
+  &__label {
+    display: block;
+    font-size: vw(18);
+    line-height: vw(30);
+    margin-bottom: vw(10);
+
+    @media (max-width: 991px) {
+      font-size: vw(18, $mobile);
+      line-height: vw(30, $mobile);
+      width: 100%;
+      margin-bottom: vw(5, $mobile);
+    }
   }
 }
 </style>

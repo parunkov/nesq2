@@ -92,6 +92,11 @@ const styles = computed(() => {
     cursor: pointer;
     width: 100%;
 
+    @media (max-width: 991px) {
+      font-size: vw(18, $mobile);
+      line-height: vw(30, $mobile);
+    }
+
     .img {
       content: '';
       flex: 0 0 auto;
@@ -101,6 +106,13 @@ const styles = computed(() => {
       background: url('/public/icons/arrow.svg') center / contain no-repeat;
       background-size: vw(12);
       transition: transform 0.4s;
+
+      @media (max-width: 991px) {
+        width: vw(25, $mobile);
+        height: vw(10, $mobile);
+        background-size: contain;
+        background-position: center center;
+      }
     }
 
     &--active {
@@ -123,6 +135,15 @@ const styles = computed(() => {
 
   &--active &__content {
     display: block;
+  }
+}
+</style>
+<style lang="scss">
+.AppCheckbox {
+  @media (max-width: 991px) {
+    margin-bottom: vw(10, $mobile) !important;
+    margin-right: vw(5, $mobile) !important;
+    transform: translateY(vw(3, $mobile));
   }
 }
 </style>

@@ -28,7 +28,7 @@ const updateDates = (datesData: Event['datetime']) => {
 </script>
 
 <template>
-  <div class="content-card">
+  <div class="content-card content-card--info">
     <div class="content-card__inner">
       <div class="content-card__head">
         <h3 class="content-card__title">Информация</h3>
@@ -36,26 +36,20 @@ const updateDates = (datesData: Event['datetime']) => {
 
       <div class="content-card__body">
         <div class="form-group">
-          <div class="form-item">
+          <div class="form-item form-item--city">
             <label for="" class="form-item__label">Город</label>
 
-            <AppDropDown
-              class="input"
-              :start-value="city"
-              :options="cities"
-              @change-value="(option) => changeCity(Number(option.id))"
-            />
+            <AppDropDown class="input" :start-value="city" :options="cities"
+              @change-value="(option) => changeCity(Number(option.id))" />
           </div>
-          <div class="form-item">
+          <div class="form-item form-item--address">
             <label for="" class="form-item__label">Адрес</label>
             <AppInput v-model="address" placeholder=" " />
           </div>
         </div>
 
-        <EventDatesCreate
-          :start-dates="dates"
-          @update-dates="(datesData: Event['datetime']) => updateDates(datesData)"
-        />
+        <EventDatesCreate :start-dates="dates"
+          @update-dates="(datesData: Event['datetime']) => updateDates(datesData)" />
 
         <PriceInputCreate v-model="prices" />
       </div>
@@ -69,14 +63,21 @@ const updateDates = (datesData: Event['datetime']) => {
   border-radius: vw(20);
   background: var(--color-white);
 
-  + .content-card {
+  @media (max-width: 991px) {
+    border-radius: vw(20, $mobile);
+  }
+
+  &--info {
+    padding-bottom: vw(15);
+  }
+
+  +.content-card {
     margin-top: vw(20);
   }
 
   // .content-card__inner
 
-  &__inner {
-  }
+  &__inner {}
 
   // .content-card__head
 
@@ -84,6 +85,12 @@ const updateDates = (datesData: Event['datetime']) => {
     padding: vw(10) vw(20);
     background: var(--color-gray-300);
     border-radius: vw(20) vw(20) 0 0;
+
+    @media (max-width: 991px) {
+      padding: vw(15, $mobile) vw(20, $mobile);
+      border-radius: vw(20, $mobile) vw(20, $mobile) 0 0;
+      border-top: none;
+    }
   }
 
   // .content-card__title
@@ -93,24 +100,43 @@ const updateDates = (datesData: Event['datetime']) => {
     font-size: vw(18);
     line-height: 1.67;
     color: var(--color-gray-1000);
+
+    @media (max-width: 991px) {
+      font-size: vw(22, $mobile);
+      line-height: vw(30, $mobile);
+      font-weight: 600;
+    }
   }
 
   // .content-card__body
 
-  &__body {
-  }
+  &__body {}
 }
 
 .form-group {
   padding: vw(20);
 
-  + .form-group {
+  @media (max-width: 991px) {
+    padding: vw(20, $mobile);
+  }
+
+  +.form-group {
     border-top: vw(1) solid var(--color-gray-300);
   }
 }
 
 .form-item {
-  // .form-block__label
+  &--city {
+    width: vw(275);
+
+    @media (max-width: 991px) {
+      width: 100%;
+    }
+  }
+
+  &--address {
+    display: none;
+  }
 
   &__label {
     display: block;
@@ -119,11 +145,23 @@ const updateDates = (datesData: Event['datetime']) => {
     font-size: vw(16);
     line-height: 1.56;
     color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      font-size: vw(16, $mobile);
+      line-height: vw(25, $mobile);
+      width: 100%;
+      margin-bottom: vw(5, $mobile);
+    }
   }
 }
 
 .dropdown {
   position: relative;
+  background: var(--color-gray-100);
+
+  @media (max-width: 991px) {
+    border-radius: vw(15, $mobile);
+  }
 
   // .dropdown__trigger
 
@@ -144,6 +182,14 @@ const updateDates = (datesData: Event['datetime']) => {
 
     &.field {
       background: var(--color-white);
+
+      @media (max-width: 991px) {
+        width: 100%;
+        padding: vw(14, $mobile);
+        font-size: vw(20, $mobile);
+        line-height: vw(30, $mobile);
+        border-radius: vw(15, $mobile);
+      }
     }
 
     &::after {

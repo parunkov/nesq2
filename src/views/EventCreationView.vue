@@ -54,17 +54,10 @@ const saveEvent = () => {
       </div>
       <div v-if="!moderatorStore.isLoading" class="content-wrap__body">
         <div class="content-wrap__column">
-          <InfoSectionCreate
-            v-model:city="newEvent.city"
-            v-model:dates="newEvent.datetime"
-            v-model:prices="newEvent.prices"
-            v-model:address="newEvent.address"
-          />
+          <InfoSectionCreate v-model:city="newEvent.city" v-model:dates="newEvent.datetime"
+            v-model:prices="newEvent.prices" v-model:address="newEvent.address" />
           <ContactsSection v-model:contacts="newEvent.contacts" />
-          <ContentSection
-            v-model:description="newEvent.description"
-            v-model:title="newEvent.name"
-          />
+          <ContentSection v-model:description="newEvent.description" v-model:title="newEvent.name" />
           <PhotoSection v-model="newEvent.images" />
         </div>
         <div class="content-wrap__column">
@@ -74,9 +67,9 @@ const saveEvent = () => {
       <div class="content-wrap__foot">
         <AppButton @click="router.back()" outline danger icon>
           <img src="/icons/delete.svg" alt="Удалить" />
-          <span>Удалить</span>
+          <span class="button-text">Забанить</span>
         </AppButton>
-        <AppButton @click="saveEvent" type="button"> Сохранить</AppButton>
+        <AppButton @click="saveEvent" type="button">Опубликовать</AppButton>
       </div>
     </div>
   </div>
@@ -90,6 +83,10 @@ const saveEvent = () => {
     padding-top: 0;
   }
 
+  @media (max-width: 991px) {
+    background-color: var(--color-gray-100);
+  }
+
   // .content-wrap__inner
 
   &__inner {
@@ -98,6 +95,11 @@ const saveEvent = () => {
     height: 100%;
     background: var(--color-white);
     border-radius: vw(20) 0 0 0;
+
+    @media (max-width: 991px) {
+      gap: vw(20, $mobile);
+      background-color: var(--color-gray-100);
+    }
 
     @include one {
       border-radius: 0;
@@ -111,6 +113,19 @@ const saveEvent = () => {
     border-bottom: vw(1) solid var(--color-gray-300);
     display: flex;
     gap: vw(10);
+
+    @media (max-width: 991px) {
+      background-color: var(--color-gray-100);
+      padding: 0;
+      padding-bottom: vw(33, $mobile);
+      border-bottom: none;
+    }
+
+    img {
+      @media (max-width: 991px) {
+        width: vw(22.5, $mobile);
+      }
+    }
   }
 
   // .content-wrap__title
@@ -121,9 +136,17 @@ const saveEvent = () => {
     gap: vw(26);
     font-weight: 700;
     font-size: vw(30);
-    line-height: 1.33;
-    letter-spacing: 0.01em;
-    color: var(--colorr-black);
+    line-height: vw(40);
+    letter-spacing: vw(0.03);
+    color: var(--color-black);
+    margin-left: vw(17);
+
+    @media (max-width: 991px) {
+      font-size: vw(30, $mobile);
+      line-height: vw(40, $mobile);
+      letter-spacing: vw(0.03, $mobile);
+      margin-left: vw(20, $mobile);
+    }
   }
 
   // .content-wrap__body
@@ -138,12 +161,19 @@ const saveEvent = () => {
     @include one {
       grid-template-columns: 1fr;
     }
+
+    @media (max-width: 991px) {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-gray-100);
+      padding: 0;
+      gap: vw(20, $mobile);
+    }
   }
 
   // .content-wrap__column
 
-  &__column {
-  }
+  &__column {}
 
   // .content-wrap__foot
 
@@ -152,6 +182,53 @@ const saveEvent = () => {
     justify-content: space-between;
     padding: vw(20);
     gap: vw(20);
+    font-size: vw(18);
+    line-height: vw(20);
+    font-weight: 600;
+
+    @media (max-width: 991px) {
+      background: var(--color-white);
+      margin-left: vw(-20, $mobile);
+      margin-right: vw(-20, $mobile);
+      padding: vw(20, $mobile);
+    }
+
+    .btn {
+      padding: vw(19) vw(24);
+
+      @media (max-width: 991px) {
+        padding: vw(20, $mobile);
+        font-size: vw(16, $mobile);
+        line-height: vw(20, $mobile);
+        border-radius: vw(10, $mobile);
+        font-weight: 600 !important;
+      }
+    }
+
+    img {
+      display: none;
+    }
+  }
+}
+
+.button-text {
+  @media (max-width: 991px) {
+    font-weight: 600 !important;
+  }
+}
+</style>
+<style lang="scss">
+.content {
+  padding-bottom: 0 !important;
+}
+
+.content-wrap__foot .btn {
+  @media (max-width: 991px) {
+    padding: vw(20, $mobile);
+    font-size: vw(16, $mobile);
+    line-height: vw(20, $mobile);
+    border-radius: vw(10, $mobile);
+    font-weight: 600 !important;
   }
 }
 </style>

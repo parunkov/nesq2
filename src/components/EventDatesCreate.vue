@@ -213,42 +213,23 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
 <template>
   <div class="form-group">
     <div class="form-date">
-      <div
-        class="form-date__row"
-        v-for="(row, rowIndex) in rows"
-        :key="rowIndex"
-        :class="`row-${rowIndex}`"
-      >
+      <div class="form-date__row" v-for="(row, rowIndex) in rows" :key="rowIndex" :class="`row-${rowIndex}`">
         <div class="form-date__item">
           <div class="form-date__element form-item">
-            <label class="form-item__label">Начало</label>
+            <label class="form-item__label">Дата начала*</label>
             <div class="form-date__dates">
               <div class="form-date__values field" :class="{ filled: row.startDate.length === 5 }">
                 <img src="/icons/black-calendar.svg" />
-                <input
-                  class="form-date__input form-date__input-date"
-                  type="text"
-                  placeholder="ДД.ММ"
-                  v-model="row.startDate"
-                  data-field="startDate"
-                  @input="(e) => handleInput(e, rowIndex, 'startDate', true)"
-                  @blur="() => handleBlur(rowIndex)"
-                />
+                <input class="form-date__input form-date__input-date" type="text" placeholder="ДД.ММ"
+                  v-model="row.startDate" data-field="startDate"
+                  @input="(e) => handleInput(e, rowIndex, 'startDate', true)" @blur="() => handleBlur(rowIndex)" />
               </div>
-              <div
-                class="form-date__values field"
-                :class="{ filled: row.startTime.length === 5, disabled: row.startDate.length < 5 }"
-              >
+              <div class="form-date__values field"
+                :class="{ filled: row.startTime.length === 5, disabled: row.startDate.length < 5 }">
                 <img src="/icons/black-time.svg" />
-                <input
-                  class="form-date__input form-date__input-time"
-                  type="text"
-                  placeholder="ЧЧ:ММ"
-                  v-model="row.startTime"
-                  data-field="startTime"
-                  @input="(e) => handleInput(e, rowIndex, 'startTime', false)"
-                  :disabled="row.startDate.length < 5"
-                />
+                <input class="form-date__input form-date__input-time" type="text" placeholder="ЧЧ:ММ"
+                  v-model="row.startTime" data-field="startTime"
+                  @input="(e) => handleInput(e, rowIndex, 'startTime', false)" :disabled="row.startDate.length < 5" />
               </div>
             </div>
           </div>
@@ -256,55 +237,30 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
           <span class="form-date__item-separator"></span>
 
           <div class="form-date__element form-item">
-            <label class="form-item__label">Окончание</label>
+            <label class="form-item__label">Дата окончания</label>
             <div class="form-date__dates">
-              <div
-                class="form-date__values field"
-                :class="{ filled: row.endDate.length === 5, disabled: row.startDate.length < 5 }"
-              >
+              <div class="form-date__values field"
+                :class="{ filled: row.endDate.length === 5, disabled: row.startDate.length < 5 }">
                 <img src="/icons/black-calendar.svg" />
-                <input
-                  class="form-date__input form-date__input-date"
-                  type="text"
-                  placeholder="ДД.ММ"
-                  v-model="row.endDate"
-                  data-field="endDate"
-                  @input="(e) => handleInput(e, rowIndex, 'endDate', true)"
-                  :disabled="row.startDate.length < 5"
-                />
+                <input class="form-date__input form-date__input-date" type="text" placeholder="ДД.ММ"
+                  v-model="row.endDate" data-field="endDate" @input="(e) => handleInput(e, rowIndex, 'endDate', true)"
+                  :disabled="row.startDate.length < 5" />
               </div>
-              <div
-                class="form-date__values field"
-                :class="{ filled: row.endTime.length === 5, disabled: row.startDate.length < 5 }"
-              >
+              <div class="form-date__values field"
+                :class="{ filled: row.endTime.length === 5, disabled: row.startDate.length < 5 }">
                 <img src="/icons/black-time.svg" />
-                <input
-                  class="form-date__input form-date__input-time"
-                  type="text"
-                  placeholder="ЧЧ:ММ"
-                  v-model="row.endTime"
-                  data-field="endTime"
-                  @input="(e) => handleInput(e, rowIndex, 'endTime', false)"
-                  :disabled="row.startDate.length < 5"
-                />
+                <input class="form-date__input form-date__input-time" type="text" placeholder="ЧЧ:ММ"
+                  v-model="row.endTime" data-field="endTime" @input="(e) => handleInput(e, rowIndex, 'endTime', false)"
+                  :disabled="row.startDate.length < 5" />
               </div>
             </div>
-            <p
-              v-if="row.showHint"
-              class="form-date__hint"
-              style="opacity: 1; transform: translateY(0)"
-            >
+            <p v-if="row.showHint" class="form-date__hint" style="opacity: 1; transform: translateY(0)">
               Введите дату начала!
             </p>
           </div>
           <div class="actions">
-            <AppButton
-              v-if="rowIndex !== 0"
-              outline
-              danger
-              class="button button--danger button--outline form-date__remove-btn"
-              @click="rows.splice(rowIndex, 1)"
-            />
+            <AppButton v-if="rowIndex !== 0" outline danger
+              class="button button--danger button--outline form-date__remove-btn" @click="rows.splice(rowIndex, 1)" />
             <AppButton mini @click="duplicateRowWithShift(rowIndex, 1)"> + День</AppButton>
             <AppButton mini @click="duplicateRowWithShift(rowIndex, 7)"> + Неделя</AppButton>
           </div>
@@ -318,9 +274,15 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
 @use '../assets/scss/helpers' as *;
 
 .actions {
-  gap: 5px;
+  gap: vw(5);
   align-self: end;
   display: inline-flex;
+
+  @media (max-width: 991px) {
+    .btn--mini {
+      display: none;
+    }
+  }
 }
 
 .button {
@@ -353,7 +315,7 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
 .form-group {
   padding: vw(20);
 
-  + .form-group {
+  +.form-group {
     border-top: vw(1) solid var(--color-gray-300);
   }
 }
@@ -395,10 +357,19 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
 }
 
 .form-date {
+
   // .form-date__row
   &__dates {
     display: flex;
-    gap: vw(5);
+    width: vw(185);
+    background: var(--color-gray-100);
+    border: vw(1) solid var(--color-gray-300);
+    border-radius: vw(10);
+
+    @media (max-width: 991px) {
+      width: vw(170, $mobile);
+      border-radius: vw(10, $mobile);
+    }
   }
 
   &__row {
@@ -407,8 +378,12 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
     gap: vw(10);
   }
 
-  &__row + &__row {
+  &__row+&__row {
     margin-top: vw(20);
+
+    @media (max-width: 991px) {
+      margin-top: vw(20, $mobile);
+    }
   }
 
   // .form-date__item
@@ -423,6 +398,12 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
 
   &__element {
     max-width: vw(205);
+    color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      max-width: vw(170, $mobile);
+      flex: 0 0 vw(170, $mobile);
+    }
   }
 
   // .form-date__values
@@ -433,10 +414,41 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
 
   &__values {
     display: flex;
+    justify-content: flex-start;
     gap: vw(5);
+    border: none;
+    background: transparent;
+
+    @media (max-width: 991px) {
+      padding: vw(5, $mobile) vw(10, $mobile);
+    }
+
+    img {
+      display: none;
+    }
 
     &:disabled {
-      border-color: var(--color-primary-700);
+      // border-color: var(--color-primary-700);
+    }
+
+    &:first-child {
+      border-radius: vw(10) 0 0 vw(10);
+      flex: 0 0 vw(50);
+
+      @media (max-width: 991px) {
+        border-radius: vw(10, $mobile) 0 0 vw(10, $mobile);
+        flex: 0 0 vw(60, $mobile);
+      }
+    }
+
+    &:last-child {
+      border-radius: 0 vw(10) vw(10) 0;
+      flex: auto;
+
+      @media (max-width: 991px) {
+        border-radius: 0 vw(10, $mobile) vw(10, $mobile) 0;
+        flex: auto;
+      }
     }
   }
 
@@ -450,9 +462,15 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
   // .form-date__input
 
   &__input {
-    width: 5ch;
+    width: vw(50);
     font-size: inherit;
     font-family: inherit;
+
+    @media (max-width: 991px) {
+      width: vw(55, $mobile);
+      font-size: vw(20, $mobile);
+      line-height: vw(20, $mobile);
+    }
 
     &::placeholder {
       color: var(--color-gray-700);
@@ -470,6 +488,13 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
     width: vw(10);
     margin: vw(20) 0;
     background: var(--color-gray-600);
+
+    @media (max-width: 991px) {
+      height: vw(1, $mobile);
+      width: vw(10, $mobile);
+      margin: vw(7, $mobile);
+      transform: translateY(vw(-10, $mobile));
+    }
   }
 
   // .form-date__actions
@@ -497,6 +522,13 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
     height: vw(19);
     width: vw(19);
     align-self: self-end;
+
+    @media (max-width: 991px) {
+      height: vw(30, $mobile);
+      width: vw(30, $mobile);
+      border-radius: vw(10, $mobile);
+      margin-left: vw(5, $mobile);
+    }
   }
 
   &__remove-btn {
@@ -507,6 +539,26 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
       height: vw(2);
       background: var(--color-danger);
       border-radius: 50%;
+
+      @media (max-width: 991px) {
+        width: vw(11, $mobile);
+        height: vw(2, $mobile);
+      }
+    }
+  }
+
+  .form-item {
+    &__label {
+      font-size: vw(16);
+      line-height: vw(25);
+      color: var(--color-gray-900);
+
+      @media (max-width: 991px) {
+        display: block;
+        font-size: vw(16, $mobile);
+        line-height: vw(25, $mobile);
+        margin-bottom: vw(5, $mobile);
+      }
     }
   }
 }

@@ -45,10 +45,16 @@ const emits = defineEmits(['input'])
   line-height: 1.11;
   color: var(--color-black);
   background: var(--color-gray-100);
-
   transition:
     border-color 0.33s ease,
     background 0.33s ease;
+
+  @media (max-width: 991px) {
+    padding: vw(15, $mobile) vw(20, $mobile);
+    border-radius: vw(15, $mobile);
+    font-size: vw(20, $mobile);
+    line-height: vw(30, $mobile);
+  }
 
   &::placeholder {
     color: var(--color-gray-700);

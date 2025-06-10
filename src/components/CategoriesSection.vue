@@ -68,25 +68,16 @@ onMounted(() => {
 
       <div class="content-card__body">
         <div @click.stop class="filters__list">
-          <AppAccordion
-            @closeOthers="(flag: boolean = false) => closeOthers(filterIndex, flag)"
-            v-for="(filter, filterIndex) of moderatorStore.rubrics"
-            class="filters__item"
-            v-model="model[filterIndex]"
-            :key="filterIndex"
-          >
+          <AppAccordion @closeOthers="(flag: boolean = false) => closeOthers(filterIndex, flag)"
+            v-for="(filter, filterIndex) of moderatorStore.rubrics" class="filters__item" v-model="model[filterIndex]"
+            :key="filterIndex">
             <template #btn>
               {{ filter.group_name }}
             </template>
             <template #content>
               <div class="filters__item-main">
-                <AppCheckbox
-                  @click.stop
-                  v-for="(item, itemIndex) of filter.group_content"
-                  class="filters__item-checkbox"
-                  v-model="selectedFilters[filter.group_name][item.id]"
-                  :key="itemIndex"
-                >
+                <AppCheckbox @click.stop v-for="(item, itemIndex) of filter.group_content"
+                  class="filters__item-checkbox" v-model="selectedFilters[filter.group_name][item.id]" :key="itemIndex">
                   {{ item.type_name }}
                 </AppCheckbox>
               </div>
@@ -106,14 +97,17 @@ onMounted(() => {
   border-radius: vw(20);
   background: var(--color-white);
 
-  + .content-card {
+  @media (max-width: 991px) {
+    border-radius: vw(20, $mobile);
+  }
+
+  +.content-card {
     margin-top: vw(20);
   }
 
   // .content-card__inner
 
-  &__inner {
-  }
+  &__inner {}
 
   // .content-card__head
 
@@ -121,6 +115,12 @@ onMounted(() => {
     padding: vw(10) vw(20);
     background: var(--color-gray-300);
     border-radius: vw(20) vw(20) 0 0;
+
+    @media (max-width: 991px) {
+      padding: vw(15, $mobile) vw(20, $mobile);
+      border-radius: vw(20, $mobile) vw(20, $mobile) 0 0;
+      border-top: none;
+    }
   }
 
   // .content-card__title
@@ -130,12 +130,26 @@ onMounted(() => {
     font-size: vw(18);
     line-height: 1.67;
     color: var(--color-gray-1000);
+
+    @media (max-width: 991px) {
+      font-size: vw(22, $mobile);
+      line-height: vw(30, $mobile);
+      font-weight: 600;
+    }
   }
 
   // .content-card__body
 
   &__body {
     padding: vw(20);
+    font-size: vw(16);
+    line-height: vw(25);
+
+    @media (max-width: 991px) {
+      padding: vw(20, $mobile);
+      font-size: vw(18, $mobile);
+      line-height: vw(25, $mobile);
+    }
   }
 }
 </style>

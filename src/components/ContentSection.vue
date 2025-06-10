@@ -67,6 +67,15 @@ const handleTextChange = () => {
     border-color 0.33s ease,
     background 0.33s ease;
 
+  @media (max-width: 991px) {
+    box-sizing: border-box;
+    padding: vw(15, $mobile) vw(20, $mobile);
+    border-radius: vw(15, $mobile);
+    font-size: vw(20, $mobile);
+    line-height: vw(30, $mobile);
+    width: 100%;
+  }
+
   &::placeholder {
     color: var(--color-gray-700);
     font-size: inherit;
@@ -105,14 +114,28 @@ textarea {
   border-radius: vw(20);
   background: var(--color-white);
 
+  @media (max-width: 991px) {
+    border-radius: vw(20, $mobile);
+  }
+
   +.content-card {
     margin-top: vw(20);
+
+    @media (max-width: 991px) {
+      margin-top: vw(20, $mobile);
+    }
   }
 
   &__head {
     padding: vw(10) vw(20);
     background: var(--color-gray-300);
     border-radius: vw(20) vw(20) 0 0;
+
+    @media (max-width: 991px) {
+      padding: vw(15, $mobile) vw(20, $mobile);
+      border-radius: vw(20, $mobile) vw(20, $mobile) 0 0;
+      border-top: none;
+    }
   }
 
   &__title {
@@ -120,11 +143,21 @@ textarea {
     font-size: vw(18);
     line-height: 1.67;
     color: var(--color-gray-1000);
+
+    @media (max-width: 991px) {
+      font-size: vw(22, $mobile);
+      line-height: vw(30, $mobile);
+      font-weight: 600;
+    }
   }
 }
 
 .form-group {
   padding: vw(20);
+
+  @media (max-width: 991px) {
+    padding: vw(20, $mobile);
+  }
 
   +.form-group {
     border-top: vw(1) solid var(--color-gray-300);
@@ -145,6 +178,17 @@ textarea {
     font-size: vw(16);
     line-height: 1.56;
     color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      font-size: vw(18, $mobile);
+      line-height: vw(30, $mobile);
+      width: 100%;
+      margin-bottom: vw(5, $mobile);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 </style>
@@ -153,6 +197,10 @@ textarea {
   background: var(--color-gray-100);
   border-color: var(--color-gray-300);
   border-radius: vw(10) vw(10) 0 0;
+
+  @media (max-width: 991px) {
+    border-radius: vw(10, $mobile) vw(10, $mobile) 0 0;
+  }
 }
 
 .ql-container {
@@ -160,11 +208,57 @@ textarea {
   border-color: var(--color-gray-300);
   border-radius: 0 0 vw(10) vw(10);
   height: vw(77);
+
+  @media (max-width: 991px) {
+    border-radius: 0 0 vw(10, $mobile) vw(10, $mobile);
+    height: vw(160, $mobile);
+  }
 }
 
 .ql-snow {
   .ql-formats:first-child {
     display: none;
+  }
+}
+
+.ql-snow.ql-toolbar {
+  height: vw(44);
+  padding: 0;
+  border: vw(1) solid var(--color-gray-300);
+  display: flex;
+  align-items: center;
+
+  @media (max-width: 991px) {
+    height: vw(44, $mobile);
+    border: vw(1, $mobile) solid var(--color-gray-300);
+  }
+
+  button {
+    width: vw(28);
+    height: vw(24);
+
+    @media (max-width: 991px) {
+      width: vw(28, $mobile);
+      height: vw(24, $mobile);
+    }
+  }
+}
+
+.ql-container.ql-snow {
+  border: vw(1) solid var(--color-gray-300);
+
+  @media (max-width: 991px) {
+    border: vw(1, $mobile) solid var(--color-gray-300);
+  }
+}
+
+.ql-editor {
+  font-size: vw(16);
+  padding: vw(12) vw(15);
+
+  @media (max-width: 991px) {
+    font-size: vw(16, $mobile);
+    padding: vw(12, $mobile) vw(15, $mobile);
   }
 }
 </style>

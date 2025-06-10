@@ -15,10 +15,10 @@ interface PriceValue {
 const prices = ref<PriceValue[]>(
   eventPrices.value && eventPrices.value.length > 0
     ? [
-        ...eventPrices.value.map((el) => {
-          return { value: el.replace('₽', ''), id: Date.now() }
-        }),
-      ]
+      ...eventPrices.value.map((el) => {
+        return { value: el.replace('₽', ''), id: Date.now() }
+      }),
+    ]
     : [{ value: '', id: Date.now() }],
 )
 
@@ -94,21 +94,12 @@ watch(
       <div class="form-price">
         <div class="form-price__values" :class="{ disabled: isFree }">
           <div class="" v-for="(item, index) in prices" :key="item.id">
-            <AppInput
-              @input="handlePriceInput(index)"
-              v-model="item.value"
-              type="number"
-              :disabled="isFree"
-            >
+            <AppInput @input="handlePriceInput(index)" v-model="item.value" type="number" :disabled="isFree">
               <template #left-slot>
                 <span class="form-price__caption">₽</span>
               </template>
               <template #right-slot>
-                <img
-                  src="/icons/delete.svg"
-                  class="form-price__delete-button"
-                  @click="deletePrice(index)"
-                />
+                <img src="/icons/delete.svg" class="form-price__delete-button" @click="deletePrice(index)" />
               </template>
             </AppInput>
           </div>
@@ -144,7 +135,7 @@ watch(
     display: none;
   }
 
-  &__checkbox:checked + &__decor::before {
+  &__checkbox:checked+&__decor::before {
     left: calc(100% - vw(27));
   }
 
@@ -181,6 +172,11 @@ watch(
     line-height: 1.11;
     color: var(--color-gray-900);
     user-select: none;
+
+    @media (max-width: 991px) {
+      font-size: vw(18, $mobile);
+      line-height: vw(20, $mobile);
+    }
   }
 }
 
@@ -192,7 +188,7 @@ watch(
 .form-group {
   padding: vw(20);
 
-  + .form-group {
+  +.form-group {
     border-top: vw(1) solid var(--color-gray-300);
   }
 }
@@ -207,6 +203,12 @@ watch(
     font-size: vw(16);
     line-height: 1.56;
     color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      font-size: vw(16, $mobile);
+      line-height: vw(30, $mobile);
+      margin-bottom: vw(5, $mobile);
+    }
   }
 }
 
@@ -217,6 +219,7 @@ watch(
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: vw(20);
+    align-items: center;
 
     transition: opacity 0.33s ease;
 
@@ -224,9 +227,41 @@ watch(
       grid-template-columns: vw(200);
     }
 
+    @media (max-width: 991px) {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: vw(20, $mobile);
+      width: vw(200, $mobile);
+    }
+
     &.disabled {
       opacity: 0.5;
       pointer-events: none;
+    }
+
+    .field {
+      padding-top: vw(20);
+      padding-bottom: vw(20);
+      font-size: vw(20);
+      line-height: vw(20);
+      border-radius: vw(15);
+      gap: vw(5);
+      align-items: baseline;
+
+      @media (max-width: 991px) {
+        padding: vw(15, $mobile);
+        font-size: vw(20, $mobile);
+        line-height: vw(20, $mobile);
+        border-radius: vw(15, $mobile);
+        width: vw(200, $mobile);
+      }
+    }
+
+    button {
+      @media (max-width: 991px) {
+        display: none;
+      }
     }
   }
 
@@ -249,6 +284,12 @@ watch(
     font-size: vw(20);
     line-height: 1;
     color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      font-size: vw(20, $mobile);
+      line-height: vw(20, $mobile);
+      margin-right: vw(15, $mobile);
+    }
   }
 
   // .form-price__input
@@ -270,11 +311,26 @@ watch(
 
   &__free-checkbox {
     margin-top: vw(15);
+
+    @media (max-width: 991px) {
+      margin-top: vw(18, $mobile);
+    }
   }
 
   // .form-price__alert
 
-  &__alert {
+  &__alert {}
+
+  .custom-checkbox__caption {
+    color: var(--color-black);
+    margin-left: vw(15);
+  }
+}
+</style>
+<style lang="scss">
+.form-price__values input {
+  @media (max-width: 991px) {
+    width: vw(126, $mobile);
   }
 }
 </style>

@@ -36,11 +36,7 @@ const selectOption = (option: Option) => {
 </script>
 
 <template>
-  <div
-    v-if="options.length > 0 && selected"
-    class="dropdown dropdown--select"
-    :class="{ 'dropdown--active': isOpen }"
-  >
+  <div v-if="options.length > 0 && selected" class="dropdown dropdown--select" :class="{ 'dropdown--active': isOpen }">
     <div class="dropdown__trigger field" @click="toggleDropdown">
       {{ selected.value }}
     </div>
@@ -49,12 +45,7 @@ const selectOption = (option: Option) => {
       <div class="dropdown__inner">
         <div class="dropdown__content">
           <ul class="dropdown-list">
-            <li
-              v-for="option in options"
-              :key="option.id"
-              class="dropdown-list__item"
-              @click="selectOption(option)"
-            >
+            <li v-for="option in options" :key="option.id" class="dropdown-list__item" @click="selectOption(option)">
               {{ option.value }}
             </li>
           </ul>
@@ -161,7 +152,15 @@ const selectOption = (option: Option) => {
     cursor: pointer;
 
     &.field {
-      background: var(--color-white);
+      background: var(--color-gray-100);
+
+      @media (max-width: 991px) {
+        width: 100%;
+        padding: vw(14, $mobile) vw(20, $mobile);
+        font-size: vw(20, $mobile);
+        line-height: vw(30, $mobile);
+        border-radius: vw(15, $mobile);
+      }
     }
 
     &::after {
@@ -200,6 +199,24 @@ const selectOption = (option: Option) => {
   &__content {
     padding-top: vw(8);
     margin: 0;
+
+    @media (max-width: 991px) {
+      font-size: vw(20, $mobile);
+      line-height: vw(30, $mobile);
+      border-radius: vw(15, $mobile);
+    }
+  }
+
+  &-list {
+    @media (max-width: 991px) {
+      font-size: vw(20, $mobile);
+      line-height: vw(30, $mobile);
+      border-radius: vw(15, $mobile);
+
+      &__item {
+        padding: vw(5, $mobile) vw(20, $mobile);
+      }
+    }
   }
 
   // .dropdown__select-native
