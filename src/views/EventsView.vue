@@ -193,10 +193,6 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
     }
   }
 
-  .table-cell--id,
-  .table-cell--active,
-  .table-cell--top,
-  .table-cell--user,
   .table-cell--email {
     font-size: vw(15);
     font-weight: 500;
@@ -207,13 +203,6 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
     div {
       font-weight: 500;
     }
-  }
-
-  .table-cell--id,
-  .table-cell--active,
-  .table-cell--top,
-  .table-cell--user {
-    text-align: center;
   }
 
   .table-cell--start-date {

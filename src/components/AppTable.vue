@@ -102,6 +102,15 @@ thead {
     width: 100%;
     gap: vw(10);
   }
+
+  th {
+    &.table-cell--id,
+    &.table-cell--active,
+    &.table-cell--top,
+    &.table-cell--user {
+      text-align: center;
+    }
+  }
 }
 
 tbody {
