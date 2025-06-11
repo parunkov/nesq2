@@ -468,7 +468,6 @@ th {
       min-height: vw(115, $mobile);
       padding: vw(15, $mobile) vw(20, $mobile);
       padding-right: vw(68, $mobile);
-      padding-bottom: vw(10, $mobile);
       border: none;
     }
   }

@@ -43,6 +43,7 @@ table {
 
   @media (max-width: 991px) {
     border-spacing: 0 vw(10, $mobile);
+    font-size: vw(16, $mobile);
   }
 }
 
@@ -55,6 +56,10 @@ thead {
   line-height: 1;
   height: vw(38);
   background-color: var(--color-gray-2);
+
+  @media (max-width: 991px) {
+    display: none;
+  }
 
   tr {
     background-color: var(--color-gray-2);
@@ -104,6 +109,7 @@ thead {
   }
 
   th {
+
     &.table-cell--id,
     &.table-cell--active,
     &.table-cell--top,
@@ -129,6 +135,12 @@ tbody {
       display: flex;
       flex-direction: column;
       width: 100%;
+      position: relative;
+      height: auto;
+      min-height: vw(155, $mobile);
+      padding: vw(15, $mobile) vw(20, $mobile);
+      border: none;
+      border-radius: vw(16, $mobile);
     }
 
     td {

@@ -216,15 +216,10 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
 
 tr {
   @media (max-width: 991px) {
-    position: relative;
-    height: auto;
     min-height: vw(160, $mobile);
-    padding: vw(15, $mobile) vw(20, $mobile);
     padding-right: vw(68, $mobile);
     padding-top: vw(45, $mobile);
     padding-bottom: vw(83, $mobile);
-    border: none;
-    border-radius: vw(16, $mobile);
   }
 }
 
