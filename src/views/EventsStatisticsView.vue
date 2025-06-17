@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
           <div>
             <div class="date-text">{{ formatDate(row.date_from) }}</div>
             <div class="cell action-cell">
-              <DeleteButton @delete="deleteEvent(row.id, index)" class="delete" />
+              <DeleteButton class="delete" />
             </div>
           </div>
         </td>
