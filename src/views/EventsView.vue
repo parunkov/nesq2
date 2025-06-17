@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import SearchBar from '../components/SearchBar.vue'
 import AppTable from '@/components/AppTable.vue'
 import AppCheckbox from '@/components/AppCheckbox.vue'
@@ -7,40 +7,87 @@ import { useEventsStore } from '@/stores/events.ts'
 import type { EventCard } from '@/types/events.ts'
 import DeleteButton from '@/components/DeleteButton.vue'
 import router from '@/router'
-import { formatDate } from '@/utils/dateConverter.ts'
+import { formatDate, getHoursDifferenceFromNow } from '@/utils/dateConverter.ts'
 
 const infiniteScrollTrigger = ref(null)
 let observer: IntersectionObserver
 const eventStore = useEventsStore()
 
-const tableData = ref<EventCard[]>([])
+const events = ref<EventCard[]>([])
 
-eventStore.getEvents().then((res) => tableData.value.push(...res))
+eventStore.getEvents().then((res) => {
+  events.value.push(...res)
+  eventStore.loadMore().then((res) => events.value.push(...res))
+})
 
 const searchQuery = ref('')
 const activeOnly = ref(false)
 
 const filterEvents = () => {
-  filteredEvents.value = tableData.value.filter(
+  filteredEvents.value = events.value.filter(
     (el) =>
       (activeOnly.value === el.is_hidden || !activeOnly.value) &&
       el.user_name.includes(searchQuery.value),
   )
 }
 
-const filteredEvents = ref(tableData.value)
+const filteredEvents = ref(events.value)
+
+const eventsByModerationTime = computed<{ hours: string; events: EventCard[] }[]>(() => {
+  const groups = new Map<string, EventCard[]>()
+
+  for (const event of filteredEvents.value) {
+    const hoursDiff = Math.floor(getHoursDifferenceFromNow(event.modified_at))
+    const daysDiff = Math.floor(hoursDiff / 24)
+
+    let key = ''
+
+    if (daysDiff >= 7) {
+      key = 'Опубликовано больше недели назад'
+    } else if (daysDiff >= 1) {
+      key = `Опубликовано ${daysDiff} ${getDayWord(daysDiff)} назад`
+    } else {
+      key = `Опубликовано ${hoursDiff} ${getHourWord(hoursDiff)} назад`
+    }
+
+    if (!groups.has(key)) {
+      groups.set(key, [])
+    }
+
+    groups.get(key)!.push(event)
+  }
+
+  return Array.from(groups.entries()).map(([hours, events]) => ({
+    hours,
+    events,
+  }))
+})
+
+function getHourWord(n: number): string {
+  if (n % 10 === 1 && n % 100 !== 11) return 'час'
+  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'часа'
+  return 'часов'
+}
+
+function getDayWord(n: number): string {
+  if (n % 10 === 1 && n % 100 !== 11) return 'день'
+  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'дня'
+  return 'дней'
+}
+
 let firstCall = true
 onMounted(() => {
   setTimeout(() => {
     observer = new IntersectionObserver(
       ([entry]) => {
+        console.log('hey')
         if (entry.isIntersecting && eventStore.nextPage && !firstCall) {
-          eventStore.loadMore().then((res) => tableData.value.push(...res))
+          eventStore.loadMore().then((res) => events.value.push(...res))
         }
         firstCall = false
       },
       {
-        rootMargin: '100px',
+        rootMargin: '200px',
       },
     )
 
@@ -54,7 +101,7 @@ onBeforeUnmount(() => {
 
 const deleteEvent = (id: number, index: number) => {
   eventStore.deleteEvent(id).then(() => {
-    tableData.value.splice(index, 1)
+    events.value.splice(index, 1)
   })
 }
 
@@ -72,7 +119,7 @@ const statusToogle = (
 
 const goTo = (name: string) => router.push({ name: name })
 
-const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id: id } })
+const editEvent = (id: number) => router.push({ name: 'moderator-event-edit', params: { id: id } })
 
 const isHiddenChange = (row: EventCard, newValue: boolean) => {
   row.is_hidden = newValue
@@ -83,8 +130,14 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
 <template>
   <h1 class="title">Мероприятия</h1>
   <header class="controls">
-    <SearchBar v-model:search-query="searchQuery" v-model:activeOnly="activeOnly" @search="filterEvents" />
-    <button @click="goTo('event-create')" class="create-button">+ Создать Мероприятие</button>
+    <SearchBar
+      v-model:search-query="searchQuery"
+      v-model:activeOnly="activeOnly"
+      @search="filterEvents"
+    />
+    <button @click="goTo('moderator-event-create')" class="create-button">
+      + Создать Мероприятие
+    </button>
   </header>
   <AppTable class="event-table">
     <template #thead>
@@ -98,9 +151,6 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
         <th class="table-cell--top">
           <div>Топ</div>
         </th>
-        <th class="table-cell--user">
-          <div>Создано</div>
-        </th>
         <th class="table-cell--email">
           <div>E-mail</div>
         </th>
@@ -113,54 +163,68 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
       </tr>
     </template>
     <template #tbody>
-      <tr v-for="(row, index) in filteredEvents" @click.stop="editEvent(row.id)" :class="{
-        'is-warning': row.is_validated === null || row.is_validated === undefined,
-        'is-error': row.is_validated === false,
-      }" :key="row.id">
-        <td class="table-cell--id">
-          <div class="mobile-text">ID:</div>
-          <div>{{ row.id }}</div>
-          <div class="mobile-text mobile-text--separator">|</div>
-        </td>
-        <td class="table-cell--active">
-          <div>
-            <AppCheckbox :model-value="!row.is_hidden" @update:model-value="() => isHiddenChange(row, !row.is_hidden)"
-              @click.stop />
-          </div>
-          <div class="mobile-text">Active</div>
-        </td>
-        <td class="table-cell--top">
-          <div>
-            <AppCheckbox @click.stop="statusToogle(row, { top: row.top })" v-model="row.top" />
-          </div>
-          <div class="mobile-text">Топ</div>
-        </td>
-        <td class="table-cell--user">
-          <div class="mobile-text">опубликовано </div>
-          <div>{{ row.user_id }}</div>
-          <div class="mobile-text"> часа. назад</div>
-        </td>
-        <td class="table-cell--email">
-          <div>{{ row.user_name }}</div>
-        </td>
-        <td class="table-cell--title">
-          <div>{{ row.name }}</div>
-        </td>
-        <td class="table-cell--date">
-          <div>
-            <div class="date-text">{{ formatDate(row.date_from) }}</div>
-            <div class="cell action-cell">
-              <DeleteButton @delete="deleteEvent(row.id, index)" class="delete" />
+      <template v-for="(group, groupIndex) in eventsByModerationTime" :key="groupIndex">
+        <tr class="sub-header">
+          <td colspan="6">
+            <div>{{ group.hours }}</div>
+          </td>
+        </tr>
+        <tr
+          v-for="(row, index) in group.events"
+          @click.stop="editEvent(row.id)"
+          :class="{
+            'is-warning': row.is_validated === null || row.is_validated === undefined,
+            'is-error': row.is_validated === false,
+          }"
+          :key="row.id"
+        >
+          <td class="table-cell--id">
+            <div class="mobile-text">ID:</div>
+            <div>{{ row.id }}</div>
+            <div class="mobile-text mobile-text--separator">|</div>
+          </td>
+          <td class="table-cell--active">
+            <div>
+              <AppCheckbox
+                :model-value="!row.is_hidden"
+                @update:model-value="() => isHiddenChange(row, !row.is_hidden)"
+                @click.stop
+              />
             </div>
-          </div>
-        </td>
-      </tr>
+            <div class="mobile-text">Active</div>
+          </td>
+          <td class="table-cell--top">
+            <div>
+              <AppCheckbox @click.stop="statusToogle(row, { top: row.top })" v-model="row.top" />
+            </div>
+            <div class="mobile-text">Топ</div>
+          </td>
+          <td class="table-cell--email">
+            <div>{{ row.user_name }}</div>
+          </td>
+          <td class="table-cell--title">
+            <div>{{ row.name }}</div>
+          </td>
+          <td class="table-cell--date">
+            <div>
+              <div class="date-text">{{ formatDate(row.date_from) }}</div>
+              <div class="cell action-cell">
+                <DeleteButton @delete="deleteEvent(row.id, index)" class="delete" />
+              </div>
+            </div>
+          </td>
+        </tr>
+      </template>
     </template>
   </AppTable>
-  <div ref="infiniteScrollTrigger"></div>
+  <div class="scroll" ref="infiniteScrollTrigger"></div>
 </template>
 
 <style scoped lang="scss">
+.scroll {
+  min-height: vw(20);
+}
+
 .title {
   display: none;
 
@@ -214,7 +278,7 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
   }
 }
 
-tr {
+tbody tr {
   @media (max-width: 991px) {
     min-height: vw(160, $mobile);
     padding-right: vw(68, $mobile);
@@ -224,21 +288,6 @@ tr {
 }
 
 .table-cell {
-  &--title {
-    @media (max-width: 991px) {
-      order: 2;
-      font-size: vw(22, $mobile);
-      line-height: vw(30, $mobile);
-      font-weight: 600;
-      padding: 0;
-      border: none;
-
-      div {
-        margin: 0;
-      }
-    }
-  }
-
   &--id {
     text-align: center;
     width: vw(73);
@@ -326,7 +375,7 @@ tr {
   }
 
   &--active {
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -343,7 +392,7 @@ tr {
   }
 
   &--top {
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -417,15 +466,15 @@ tr {
   }
 }
 
-.date-text {
-  @media (max-width: 991px) {
-    position: absolute;
-    top: vw(15, $mobile);
-    left: vw(20, $mobile);
-    font-size: vw(16, $mobile);
-    line-height: vw(20, $mobile);
-  }
-}
+// .date-text {
+//   @media (max-width: 991px) {
+//     position: absolute;
+//     top: vw(15, $mobile);
+//     left: vw(20, $mobile);
+//     font-size: vw(16, $mobile);
+//     line-height: vw(20, $mobile);
+//   }
+// }
 
 .delete-button {
   @media (max-width: 991px) {
@@ -438,7 +487,7 @@ tr {
   }
 }
 
-.table-cell--date>div {
+.table-cell--date > div {
   display: flex;
   justify-content: space-between;
   align-items: center;

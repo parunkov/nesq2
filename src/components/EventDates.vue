@@ -2,7 +2,8 @@
 import { ref, nextTick } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import type { Event as EventType, DateTime } from '@/types/events.ts'
-import { useRoute } from 'vue-router'
+import MinusButton from '@/components/MinusButton.vue'
+import { useAuthStore } from '@/stores/auth.ts'
 
 interface DateRow {
   startDate: string
@@ -20,17 +21,7 @@ const props = defineProps({
   },
 })
 
-function getModeFromRoute(): 'create' | 'edit' {
-  const route = useRoute()
-
-  // Например: /requests/create или /requests/edit/:id
-  if (route.path.includes('/create')) return 'create'
-  if (route.path.includes('/edit')) return 'edit'
-
-  return 'create' // fallback, если ничего не совпало
-}
-
-const mode = getModeFromRoute()
+const authStore = useAuthStore()
 
 const dates = ref<EventType['datetime']>(props.startDates)
 
@@ -39,6 +30,19 @@ const emit = defineEmits(['updateDates'])
 const rows = ref<DateRow[]>(convertToDateRows(props.startDates))
 
 function convertToDateRows(target: DateTime[]): DateRow[] {
+  if (target.length === 0) {
+    return [
+      {
+        startDate: '',
+        startTime: '',
+        endDate: '',
+        endTime: '',
+        showActions: true,
+        showHint: false,
+      },
+    ]
+  }
+
   return target.map(({ from, to }) => {
     const [startDateRaw, startTimeRaw] = from.split('T')
     const [, startMonth, startDay] = startDateRaw.split('-')
@@ -314,32 +318,19 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
             </p>
           </div>
 
-          <div v-if="mode === `create`" class="actions">
-            <AppButton
-              v-if="rowIndex !== 0"
-              outline
-              danger
-              class="button button--danger button--outline form-date__remove-btn"
-              @click="deleteRow(rowIndex)"
-            />
+          <div v-if="authStore.currentUser?.role == 'organizer'" class="form-date__actions">
+            <MinusButton v-if="rowIndex !== 0" @click="deleteRow(rowIndex)" />
             <AppButton mini @click="duplicateRowWithShift(rowIndex, 1)"> + День</AppButton>
             <AppButton mini @click="duplicateRowWithShift(rowIndex, 7)"> + Неделя</AppButton>
           </div>
-          <div v-else class="actions">
-            <AppButton
-              v-if="rowIndex !== 0"
-              outline
-              danger
-              class="button button--danger button--outline form-date__remove-btn"
-              @click="rows.splice(rowIndex, 1)"
-            />
+          <div v-else class="form-date__actions">
+            <MinusButton v-if="rowIndex !== 0" @click="deleteRow(rowIndex)" />
           </div>
         </div>
       </div>
 
-      <!-- Actions -->
       <div
-        v-if="mode === `edit`"
+        v-if="authStore.currentUser?.role != 'organizer'"
         class="form-date__actions"
         style="opacity: 1; transform: translateY(0)"
       >

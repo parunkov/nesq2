@@ -1,19 +1,26 @@
 <script setup lang="ts">
 import type { Event } from '@/types/events.ts'
 import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { ref } from 'vue'
+import AppInput from '@/components/AppInput.vue'
 
 const title = defineModel<Event['name']>('title')
-
+const description = defineModel<Event['description']>('description')
 const quillEditor = ref()
+
+const MAX_LENGTH = 1000
 
 const handleTextChange = () => {
   if (quillEditor.value) {
-    const htmlContent = quillEditor.value.getHTML()
+    const editor = quillEditor.value.getQuill()
+    const text = editor.getText()
 
-    console.log('🖋️ QuillEditor содержимое изменено:')
-    console.log('📝 HTML:', htmlContent)
+    if (text.length > MAX_LENGTH + 1) {
+      editor.deleteText(MAX_LENGTH, text.length)
+    }
+
+    description.value = quillEditor.value.getHTML()
   }
 }
 </script>
@@ -30,8 +37,7 @@ const handleTextChange = () => {
           <div class="form-block">
             <div class="form-item">
               <label for="" class="form-item__label">Название*</label>
-
-              <input type="text" class="field" v-model="title" placeholder=" " />
+              <AppInput type="text" v-model="title" placeholder=" " :max_length="127" />
             </div>
           </div>
 
@@ -39,7 +45,11 @@ const handleTextChange = () => {
             <div class="form-item">
               <label for="" class="form-item__label">Описание</label>
 
-              <QuillEditor ref="quillEditor" @textChange="handleTextChange" placeholder="Введите описание события..." />
+              <QuillEditor
+                ref="quillEditor"
+                @textChange="handleTextChange"
+                placeholder="Введите описание события..."
+              />
             </div>
           </div>
         </div>
@@ -51,64 +61,6 @@ const handleTextChange = () => {
 <style scoped lang="scss">
 @use '../assets/scss/helpers' as *;
 
-.field {
-  display: block;
-  width: 100%;
-  padding: vw(10) 0;
-  border: vw(1) solid var(--color-gray-300);
-  border-radius: vw(10);
-  font-weight: 400;
-  font-size: vw(18);
-  line-height: 1.11;
-  color: var(--color-black);
-  background: var(--color-gray-100);
-
-  transition:
-    border-color 0.33s ease,
-    background 0.33s ease;
-
-  @media (max-width: 991px) {
-    box-sizing: border-box;
-    padding: vw(15, $mobile) vw(20, $mobile);
-    border-radius: vw(15, $mobile);
-    font-size: vw(20, $mobile);
-    line-height: vw(30, $mobile);
-    width: 100%;
-  }
-
-  &::placeholder {
-    color: var(--color-gray-700);
-    font-size: inherit;
-  }
-
-  &:focus,
-  &:has(input:focus) {
-    border-color: var(--color-primary-700);
-  }
-
-  &--textarea {
-    min-height: vw(120);
-  }
-}
-
-:is(input, textarea).field:not(:placeholder-shown),
-.field:has(input:not(:placeholder-shown)) {
-  background: var(--color-white);
-}
-
-textarea {
-  outline: none;
-  /* Убрать стандартную чёрную рамку */
-  resize: none;
-  /* Запретить растягивание */
-  overflow: auto;
-
-  &:focus,
-  &:has(input:focus) {
-    border-color: var(--color-primary-700);
-  }
-}
-
 .content-card {
   box-shadow: 0 vw(5) vw(15) 0 rgba(39, 18, 47, 0.1);
   border-radius: vw(20);
@@ -118,7 +70,7 @@ textarea {
     border-radius: vw(20, $mobile);
   }
 
-  +.content-card {
+  + .content-card {
     margin-top: vw(20);
 
     @media (max-width: 991px) {
@@ -159,13 +111,13 @@ textarea {
     padding: vw(20, $mobile);
   }
 
-  +.form-group {
+  + .form-group {
     border-top: vw(1) solid var(--color-gray-300);
   }
 }
 
 .form-block {
-  +.form-block {
+  + .form-block {
     margin-top: vw(10);
   }
 }
@@ -207,7 +159,7 @@ textarea {
   background: var(--color-gray-100);
   border-color: var(--color-gray-300);
   border-radius: 0 0 vw(10) vw(10);
-  height: vw(77);
+  height: vw(300);
 
   @media (max-width: 991px) {
     border-radius: 0 0 vw(10, $mobile) vw(10, $mobile);

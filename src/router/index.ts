@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import UsersView from '@/views/UsersView.vue'
 import EventsView from '@/views/EventsView.vue'
-import EventCreationView from '@/views/EventCreationView.vue'
+import ModeratorCreationView from '@/views/ModeratorCreationView.vue'
+import OrganizerCreateView from '@/views/OrganizerCreateView.vue'
+import ModeratorEditView from '@/views/ModeratorEditView.vue'
+import OrganizerEditView from '@/views/OrganizerEditView.vue'
 import LoginView from '@/views/LoginView.vue'
 import EventsStatisticsView from '@/views/EventsStatisticsView.vue'
-import EventEditView from '@/views/EventEditView.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import CitiesStatisticsView from '@/views/CitiesStatisticsView.vue'
@@ -28,7 +30,7 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'events',
+          path: 'event/list',
           name: 'events',
           component: EventsView,
           meta: {
@@ -36,7 +38,7 @@ const router = createRouter({
           },
         },
         {
-          path: 'users',
+          path: 'user/list',
           name: 'users',
           component: UsersView,
           meta: {
@@ -44,15 +46,50 @@ const router = createRouter({
           },
         },
         {
-          path: 'event-create',
-          name: 'event-create',
-          component: EventCreationView,
+          path: 'redact/new',
+          name: 'moderator-event-create',
+          component: ModeratorCreationView,
+          meta: {
+            requiredRoles: ['moderator', 'owner'],
+          },
+        },
+        {
+          path: 'redact/:id',
+          name: 'moderator-event-edit',
+          component: ModeratorEditView,
+          meta: {
+            requiredRoles: ['moderator', 'owner'],
+          },
+        },
+
+        {
+          path: 'org/redact/new',
+          name: 'organizer-event-create',
+          component: OrganizerCreateView,
           meta: {
             requiredRoles: ['organizer', 'moderator', 'owner'],
           },
         },
         {
-          path: 'events-statistics',
+          path: 'org/redact/:id',
+          name: 'organizer-event-edit',
+          component: OrganizerEditView,
+          meta: {
+            requiredRoles: ['organizer', 'moderator', 'owner'],
+          },
+        },
+        {
+          path: 'org/event/list',
+          name: 'organizer-events',
+          component: EventsOrganizerView,
+          meta: {
+            requiredRoles: ['organizer', 'owner'],
+          },
+        },
+
+        // Statistics pages under /stat/*
+        {
+          path: 'stat/events',
           name: 'events-statistics',
           component: EventsStatisticsView,
           meta: {
@@ -60,15 +97,7 @@ const router = createRouter({
           },
         },
         {
-          path: 'event/:id',
-          name: 'event-edit',
-          component: EventEditView,
-          meta: {
-            requiredRoles: ['organizer', 'moderator', 'owner'],
-          },
-        },
-        {
-          path: 'cities-statistics',
+          path: 'stat/cities',
           name: 'cities-statistics',
           component: CitiesStatisticsView,
           meta: {
@@ -76,19 +105,11 @@ const router = createRouter({
           },
         },
         {
-          path: 'days-statistics',
+          path: 'stat/days',
           name: 'days-statistics',
           component: DaysStatistics,
           meta: {
             requiredRoles: ['moderator', 'owner'],
-          },
-        },
-        {
-          path: 'organizer-events',
-          name: 'organizer-events',
-          component: EventsOrganizerView,
-          meta: {
-            requiredRoles: ['organizer', 'owner'],
           },
         },
       ],

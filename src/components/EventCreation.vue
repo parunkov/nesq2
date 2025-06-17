@@ -3,13 +3,21 @@ import CategoriesSection from '@/components/CategoriesSection.vue'
 import ContentSection from '@/components/ContentSection.vue'
 import PhotoSection from '@/components/PhotoSection.vue'
 import type { Event } from '@/types/events.ts'
-import { ref, watch } from 'vue'
+import { type PropType, ref, watch } from 'vue'
 import { useEventsStore } from '@/stores/events.ts'
 import router from '@/router'
 import AppButton from '@/components/AppButton.vue'
 import { useModeratorStore } from '@/stores/moderator.ts'
 import ContactsSection from '@/components/ContactsSection.vue'
-import InfoSectionCreate from '@/components/InfoSectionCreate.vue'
+import InfoSection from '@/components/InfoSection.vue'
+import { useAuthStore } from '@/stores/auth.ts'
+
+const props = defineProps({
+  role: {
+    type: String as PropType<'moderator' | 'organizer'>,
+    required: true,
+  },
+})
 
 const moderatorStore = useModeratorStore()
 const eventStore = useEventsStore()
@@ -39,9 +47,26 @@ watch(
 const saveEvent = () => {
   if (!newEvent.value) return
   const { images, ...eventWithoutImages } = newEvent.value
-  eventStore.addEvent({ ...eventWithoutImages, images: [''] }).then((res) => {
+  eventStore.addEvent({ ...eventWithoutImages }).then((res) => {
+    if (images) eventStore.uploadImage(images, res.id).then(() => goToEvents())
+  })
+}
+
+const banEvent = () => {
+  router.push({ name: 'events' })
+}
+const publishEvent = () => {
+  if (!newEvent.value) return
+  const { images, ...eventWithoutImages } = newEvent.value
+  eventStore.addEvent({ ...eventWithoutImages }).then((res) => {
+    eventStore.updateEventsStatus([{ id: res.id, is_validated: true, is_hidden: false }])
     if (images) eventStore.uploadImage(images, res.id).then(() => router.push({ name: 'events' }))
   })
+}
+
+const goToEvents = () => {
+  if (useAuthStore().currentUser?.role != 'organizer') router.push({ name: 'events' })
+  else router.push({ name: 'organizer-events' })
 }
 </script>
 
@@ -54,23 +79,36 @@ const saveEvent = () => {
       </div>
       <div v-if="!moderatorStore.isLoading" class="content-wrap__body">
         <div class="content-wrap__column">
-          <InfoSectionCreate v-model:city="newEvent.city" v-model:dates="newEvent.datetime"
-            v-model:prices="newEvent.prices" v-model:address="newEvent.address" />
+          <InfoSection
+            v-model:city="newEvent.city"
+            v-model:dates="newEvent.datetime"
+            v-model:prices="newEvent.prices"
+            v-model:address="newEvent.address"
+          />
           <ContactsSection v-model:contacts="newEvent.contacts" />
-          <ContentSection v-model:description="newEvent.description" v-model:title="newEvent.name" />
+          <ContentSection
+            v-model:description="newEvent.description"
+            v-model:title="newEvent.name"
+          />
           <PhotoSection v-model="newEvent.images" />
         </div>
         <div class="content-wrap__column">
           <CategoriesSection v-model="newEvent.types" />
         </div>
       </div>
-      <div class="content-wrap__foot">
-        <AppButton @click="router.back()" outline danger icon>
-          <img src="/icons/delete.svg" alt="Удалить" />
-          <span class="button-text">Забанить</span>
-        </AppButton>
-        <AppButton @click="saveEvent" type="button">Опубликовать</AppButton>
-      </div>
+    </div>
+    <div v-if="props.role == 'organizer'" class="content-wrap__foot">
+      <AppButton @click="router.back()" outline danger icon>
+        <img src="/icons/delete.svg" alt="Удалить" />
+        <span>Удалить</span>
+      </AppButton>
+      <AppButton @click="saveEvent" type="button"> Сохранить</AppButton>
+    </div>
+    <div v-if="props.role == 'moderator'" class="content-wrap__foot">
+      <AppButton @click="banEvent" outline danger icon>
+        <span>Забанить</span>
+      </AppButton>
+      <AppButton @click="publishEvent" type="button"> Опубликовать</AppButton>
     </div>
   </div>
 </template>
@@ -93,7 +131,6 @@ const saveEvent = () => {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--color-white);
     border-radius: vw(20) 0 0 0;
 
     @media (max-width: 991px) {
@@ -173,11 +210,15 @@ const saveEvent = () => {
 
   // .content-wrap__column
 
-  &__column {}
+  &__column {
+  }
 
   // .content-wrap__foot
 
   &__foot {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--color-white);
     display: flex;
     justify-content: space-between;
     padding: vw(20);

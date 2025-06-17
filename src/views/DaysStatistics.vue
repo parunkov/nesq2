@@ -34,7 +34,7 @@ const chart = {
 
 <template>
   <AppHeader>
-    <h2 class="title">Статистика</h2>
+    <h2 class="title">Статистика по дням</h2>
   </AppHeader>
   <StatisticChart v-if="chart" :chart="chart" />
 </template>

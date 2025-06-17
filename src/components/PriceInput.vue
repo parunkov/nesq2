@@ -4,7 +4,7 @@ import ToggleSwitch from '@/components/ToggleSwitch.vue'
 import type { Event } from '@/types/events.ts'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
-import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.ts'
 
 const eventPrices = defineModel<Event['prices']>()
 
@@ -12,6 +12,8 @@ interface PriceValue {
   value: string
   id: number
 }
+
+const authStore = useAuthStore()
 
 const prices = ref<PriceValue[]>(
   eventPrices.value && eventPrices.value.length > 0
@@ -23,36 +25,15 @@ const prices = ref<PriceValue[]>(
     : [{ value: '', id: Date.now() }],
 )
 
-function getModeFromRoute(): 'create' | 'edit' {
-  const route = useRoute()
-
-  // Например: /requests/create или /requests/edit/:id
-  if (route.path.includes('/create')) return 'create'
-  if (route.path.includes('/edit')) return 'edit'
-
-  return 'create' // fallback, если ничего не совпало
-}
-
-const mode = getModeFromRoute()
-
 const addPrice = () => prices.value.push({ value: '', id: Date.now() + Math.random() })
-// watch(
-//   () => eventPrices.value,
-//   () => {
-//     prices.value =
-//       eventPrices.value && eventPrices.value.length > 0
-//         ? eventPrices.value.map((el) => {
-//             return { value: el.replace('₽', ''), id: Date.now() }
-//           })
-//         : [{ value: '', id: Date.now() }]
-//   },
-//   { deep: true, once: true, immediate: false },
-// )
 
 const isFree = ref(false)
 
 const handlePriceInput = async (index: number) => {
-  if (mode === 'edit') return
+  if (authStore.currentUser?.role != 'organizer') return
+  const string_price = String(prices.value[index].value)
+  console.log(string_price.length)
+  if (string_price.length > 6) prices.value[index].value = string_price.slice(0, 6)
   const price = prices.value[index]
 
   const isLast = index === prices.value.length - 1
@@ -112,6 +93,7 @@ watch(
               v-model="item.value"
               type="number"
               :disabled="isFree"
+              max="99999"
             >
               <template #left-slot>
                 <span class="form-price__caption">₽</span>
@@ -125,7 +107,9 @@ watch(
               </template>
             </AppInput>
           </div>
-          <AppButton v-if="mode === `edit`" mini @click="addPrice">+ Цена</AppButton>
+          <AppButton v-if="authStore.currentUser?.role != 'organizer'" mini @click="addPrice"
+            >+ Цена
+          </AppButton>
         </div>
 
         <div class="form-price__free-checkbox custom-checkbox">

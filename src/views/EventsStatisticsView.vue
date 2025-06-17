@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import AppTable from '@/components/AppTable.vue'
-import AppCheckbox from '@/components/AppCheckbox.vue'
 import { useEventsStore } from '@/stores/events.ts'
 import type { EventCard } from '@/types/events.ts'
 import AppHeader from '@/components/AppHeader.vue'
+import { formatDate } from '@/utils/dateConverter.ts'
 
 const infiniteScrollTrigger = ref(null)
 let observer: IntersectionObserver
@@ -12,7 +12,10 @@ const eventStore = useEventsStore()
 
 const tableData = ref<EventCard[]>([])
 
-eventStore.getEvents().then((res) => tableData.value.push(...res))
+eventStore.getEvents().then((res) => {
+  tableData.value.push(...res)
+  eventStore.loadMore().then((res) => tableData.value.push(...res))
+})
 
 const filteredEvents = ref(tableData.value)
 
@@ -21,13 +24,14 @@ onMounted(() => {
   setTimeout(() => {
     observer = new IntersectionObserver(
       ([entry]) => {
+        console.log('hey')
         if (entry.isIntersecting && eventStore.nextPage && !firstCall) {
           eventStore.loadMore().then((res) => tableData.value.push(...res))
         }
         firstCall = false
       },
       {
-        rootMargin: '100px',
+        rootMargin: '200px',
       },
     )
 
@@ -39,21 +43,21 @@ onBeforeUnmount(() => {
   if (observer && infiniteScrollTrigger.value) observer.unobserve(infiniteScrollTrigger.value)
 })
 
-const statusToogle = (event: EventCard) => {
-  eventStore.updateEventsStatus([
-    {
-      id: event.id,
-      is_validated: false,
-      is_hidden: event.is_hidden,
-      top: event.top,
-    },
-  ])
-}
+// const statusToogle = (event: EventCard) => {
+//   eventStore.updateEventsStatus([
+//     {
+//       id: event.id,
+//       is_validated: false,
+//       is_hidden: event.is_hidden,
+//       top: event.top,
+//     },
+//   ])
+// }
 </script>
 
 <template>
   <AppHeader>
-    <hi class="title">Статистика</hi>
+    <hi class="title">Статистика по мероприятиям</hi>
   </AppHeader>
   <AppTable class="event-table">
     <template #thead>
@@ -61,14 +65,8 @@ const statusToogle = (event: EventCard) => {
         <th class="table-cell--id">
           <div>ID</div>
         </th>
-        <th class="table-cell--active">
-          <div>Active</div>
-        </th>
-        <th class="table-cell--top">
-          <div>Топ</div>
-        </th>
-        <th class="table-cell--user">
-          <div>User ID</div>
+        <th class="table-cell--date">
+          <div>Дата начала</div>
         </th>
         <th class="table-cell--email">
           <div>E-mail</div>
@@ -77,7 +75,7 @@ const statusToogle = (event: EventCard) => {
           <div>Название</div>
         </th>
         <th class="table-cell--views">
-          <div>Просмотры pwa/tg</div>
+          <div>Просмотры<br>pwa/tg</div>
         </th>
         <th class="table-cell--redirect">
           <div>Переходы</div>
@@ -88,29 +86,22 @@ const statusToogle = (event: EventCard) => {
       </tr>
     </template>
     <template #tbody>
-      <tr
-        v-for="row in filteredEvents"
-        :class="{
-          'is-warning': row.is_validated === null || row.is_validated === undefined,
-          'is-error': row.is_validated === false,
-        }"
-        :key="row.id"
-      >
+      <tr v-for="row in filteredEvents" :class="{
+        'is-warning': row.is_validated === null || row.is_validated === undefined,
+        'is-error': row.is_validated === false,
+      }" :key="row.id">
         <td class="table-cell--id">
+          <div class="mobile-text">ID:</div>
           <div>{{ row.id }}</div>
+          <div class="mobile-text mobile-text--separator">|</div>
         </td>
-        <td class="table-cell--active">
+        <td class="table-cell--date">
           <div>
-            <AppCheckbox @click="statusToogle(row)" v-model="row.is_hidden" />
+            <div class="date-text">{{ formatDate(row.date_from) }}</div>
+            <div class="cell action-cell">
+              <DeleteButton @delete="deleteEvent(row.id, index)" class="delete" />
+            </div>
           </div>
-        </td>
-        <td class="table-cell--top">
-          <div>
-            <AppCheckbox @click="statusToogle(row)" v-model="row.top" />
-          </div>
-        </td>
-        <td class="table-cell--user">
-          <div>{{ row.user_id }}</div>
         </td>
         <td class="table-cell--email">
           <div>{{ row.user_name }}</div>
@@ -119,6 +110,7 @@ const statusToogle = (event: EventCard) => {
           <div>{{ row.name }}</div>
         </td>
         <td class="table-cell--views">
+          <div class="mobile-text">Статистика:</div>
           <div>{{ row.stat_view_pwa + `/` + row.stat_view_tg }}</div>
         </td>
         <td class="table-cell--redirect">
@@ -130,25 +122,17 @@ const statusToogle = (event: EventCard) => {
       </tr>
     </template>
   </AppTable>
-  <div ref="infiniteScrollTrigger"></div>
+  <div class="scroll" ref="infiniteScrollTrigger"></div>
 </template>
 
 <style scoped lang="scss">
-.title {
-  display: flex;
-  align-items: center;
-  gap: vw(26);
-  font-weight: 700;
-  font-size: vw(30);
-  line-height: 1.33;
-  letter-spacing: 0.01em;
-  color: var(--color-black);
+.scroll {
+  min-height: vw(20);
 }
 
 .table-cell {
   &--id {
     text-align: center;
-    min-width: vw(100);
   }
 
   &--user {
@@ -156,28 +140,16 @@ const statusToogle = (event: EventCard) => {
     min-width: vw(100);
   }
 
-  &--email {
-    width: 20%;
-  }
+  &--date {
+    width: vw(98);
 
-  &--title {
-    width: 30%;
-  }
-
-  &--views {
-    text-align: center;
-  }
-
-  &--redirect {
-    text-align: center;
-  }
-
-  &--favorite {
-    text-align: center;
+    div {
+      width: vw(98);
+    }
   }
 }
 
-.table-cell--date > div {
+.table-cell--date>div {
   display: flex;
   justify-content: space-between;
   align-items: center;

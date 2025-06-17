@@ -13,7 +13,10 @@ const eventStore = useEventsStore()
 
 const tableData = ref<EventCard[]>([])
 
-eventStore.getEvents().then((res) => tableData.value.push(...res))
+eventStore.getEvents().then((res) => {
+  tableData.value.push(...res)
+  eventStore.loadMore().then((res) => tableData.value.push(...res))
+})
 
 const filteredEvents = ref(tableData.value)
 
@@ -53,13 +56,15 @@ const deleteEvent = (id: number, index: number) => {
 
 const goTo = (name: string) => router.push({ name: name })
 
-const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id: id } })
+const editEvent = (id: number) => router.push({ name: 'organizer-event-edit', params: { id: id } })
 </script>
 
 <template>
   <header class="controls">
     <h1 class="title">Мероприятия</h1>
-    <button @click="goTo('event-create')" class="create-button">+ Создать Мероприятие</button>
+    <button @click="goTo('organizer-event-create')" class="create-button">
+      + Создать Мероприятие
+    </button>
   </header>
   <AppTable class="event-table">
     <template #thead>
@@ -80,13 +85,11 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
     </template>
     <template #tbody>
       <tr class="sub-header">
-        <td class="sub-header-cell" colspan="4">
+        <td v-if="eventsOnModeration.length" class="sub-header-cell" colspan="4">
           <div>На модерации</div>
         </td>
       </tr>
-      <tr v-for="(row, index) in filteredEvents.filter(
-        (el) => el.is_validated === null || el.is_validated === undefined,
-      )" @click.stop="editEvent(row.id)" :key="row.id">
+      <tr v-for="(row, index) in eventsOnModeration" @click.stop="editEvent(row.id)" :key="row.id">
         <td class="table-cell--image">
           <img :src="row.image" />
         </td>
@@ -107,13 +110,12 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
           </div>
         </td>
       </tr>
-      <tr class="sub-header">
+      <tr v-if="eventApproved.length" class="sub-header">
         <td class="sub-header-cell" colspan="4">
           <div>Опубликованные</div>
         </td>
       </tr>
-      <tr v-for="(row, index) in filteredEvents.filter((el) => el.is_validated === true)"
-        @click.stop="editEvent(row.id)" :key="row.id">
+      <tr v-for="(row, index) in eventApproved" @click.stop="editEvent(row.id)" :key="row.id">
         <td class="table-cell--image">
           <img :src="row.image" />
         </td>
@@ -132,13 +134,12 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
           </div>
         </td>
       </tr>
-      <tr class="sub-header">
+      <tr v-if="eventsBanned.length" class="sub-header">
         <td class="sub-header-cell" colspan="4">
           <div>Не прошедшие модерацию</div>
         </td>
       </tr>
-      <tr v-for="(row, index) in filteredEvents.filter((el) => el.is_validated === false)"
-        @click.stop="editEvent(row.id)" :key="row.id">
+      <tr v-for="(row, index) in eventsBanned" @click.stop="editEvent(row.id)" :key="row.id">
         <td class="table-cell--image">
           <img :src="row.image" />
         </td>
@@ -159,10 +160,14 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
       </tr>
     </template>
   </AppTable>
-  <div ref="infiniteScrollTrigger"></div>
+  <div class="scroll" ref="infiniteScrollTrigger"></div>
 </template>
 
 <style scoped lang="scss">
+.scroll {
+  min-height: vw(20);
+}
+
 .table-header {
   font-size: vw(15);
   font-weight: 500;
@@ -185,7 +190,6 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
 
   .table-cell--image {
     width: vw(110);
-    width: 110px;
     text-align: left;
     font-size: vw(15);
     font-weight: 500;
@@ -219,47 +223,7 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
   }
 }
 
-.sub-header {
-  margin: 0;
-  height: vw(23) !important;
-  display: block;
-
-  @media (max-width: 991px) {
-    height: vw(20, $mobile) !important;
-    min-height: vw(23, $mobile) !important;
-    padding: 0 !important;
-    margin-top: 0;
-  }
-}
-
-.sub-header-cell {
-  position: relative;
-  overflow: visible;
-  width: vw(110);
-  height: 0;
-  margin: 0;
-
-  div {
-    position: absolute;
-    top: vw(-10);
-    left: 0;
-    width: vw(300);
-    margin: 0;
-    font-size: vw(15);
-    font-weight: 500;
-    line-height: vw(20);
-
-    @media (max-width: 991px) {
-      font-size: vw(15, $mobile);
-      line-height: vw(20, $mobile);
-      top: 0;
-      width: vw(300, $mobile);
-    }
-  }
-}
-
-
-.table-cell--end-date>div {
+.table-cell--end-date > div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -332,7 +296,7 @@ const editEvent = (id: number) => router.push({ name: 'event-edit', params: { id
       line-height: vw(20, $mobile);
     }
 
-    div>div {
+    div > div {
       font-weight: 400;
     }
 
@@ -475,7 +439,6 @@ th {
   .table-cell--image {
     height: vw(108);
     width: vw(110);
-    width: 110px;
 
     @media (max-width: 991px) {
       display: none;

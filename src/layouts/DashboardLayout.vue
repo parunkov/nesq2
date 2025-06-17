@@ -26,11 +26,13 @@ useModeratorStore()
   flex: 1;
   padding-top: vw(20);
   align-self: stretch;
-  box-sizing: inherit;
+  box-sizing: content-box;
   overflow-y: auto;
 }
 
 .content {
+  min-height: 100%;
+  height: fit-content;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -54,7 +56,6 @@ useModeratorStore()
   min-height: 100vh;
 
   @media (max-width: 991px) {
-    height: auto;
   }
 }
 

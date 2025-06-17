@@ -48,7 +48,7 @@ const updateDates = (datesData: Event['datetime']) => {
           </div>
           <div class="form-item">
             <label for="" class="form-item__label">Адрес</label>
-            <AppInput v-model="address" placeholder=" " />
+            <AppInput v-model="address" placeholder=" " :max_length="100" />
           </div>
         </div>
 

@@ -1,5 +1,7 @@
-<script setup lang="ts">
-import { defineModel, defineProps } from 'vue'
+<script lang="ts" setup>
+import { defineModel, defineProps, defineEmits, ref, watch } from 'vue'
+
+defineOptions({ inheritAttrs: false })
 
 const model = defineModel<number | string>()
 
@@ -10,29 +12,59 @@ const props = defineProps<{
   name?: string
   autocomplete?: string
   required?: boolean
+  max_length?: number
+  validate?: (value: string | number) => string | null
 }>()
 
-const emits = defineEmits(['input'])
+const emits = defineEmits(['input', 'error'])
+
+const error = ref<string | null>(null)
+
+const validateField = () => {
+  if (props.validate && model.value) {
+    const result = props.validate(model.value)
+    error.value = result
+    emits('error', result)
+  }
+}
+
+// Watch on input change
+watch(
+  () => model.value,
+  () => {
+    validateField()
+  },
+)
 </script>
 
 <template>
-  <div class="field">
-    <slot name="left-slot"></slot>
-    <input
-      v-model="model"
-      required
-      :name="props.name"
-      :autocomplete="props.autocomplete"
-      :placeholder="props.placeholder || ' '"
-      :disabled="props.disabled"
-      :type="props.type || 'text'"
-      @input="emits('input')"
-    />
-    <slot name="right-slot"></slot>
+  <div class="field-wrapper">
+    <div class="field" :class="{ 'field--error': !!error }">
+      <slot name="left-slot"></slot>
+      <input
+        v-bind="$attrs"
+        v-model="model"
+        :required="props.required"
+        :name="props.name"
+        :autocomplete="props.autocomplete"
+        :placeholder="props.placeholder || ' '"
+        :disabled="props.disabled"
+        :type="props.type || 'text'"
+        @input="emits('input')"
+        @blur="validateField"
+        :maxlength="props.max_length"
+      />
+      <slot name="right-slot"></slot>
+    </div>
+    <div v-if="error" class="field-error">{{ error }}</div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.field-wrapper {
+  width: 100%;
+}
+
 .field {
   display: inline-flex;
   gap: vw(20);
@@ -48,6 +80,14 @@ const emits = defineEmits(['input'])
   transition:
     border-color 0.33s ease,
     background 0.33s ease;
+
+  input {
+    width: 100%;
+  }
+
+  &--error {
+    border-color: var(--color-danger);
+  }
 
   @media (max-width: 991px) {
     padding: vw(15, $mobile) vw(20, $mobile);
@@ -71,12 +111,9 @@ const emits = defineEmits(['input'])
   }
 }
 
-:is(input, textarea).field:not(:placeholder-shown),
-.field:has(input:not(:placeholder-shown)) {
-  background: var(--color-white);
-}
-
-input {
-  width: inherit;
+.field-error {
+  margin-top: vw(4);
+  font-size: vw(14);
+  color: var(--color-danger);
 }
 </style>

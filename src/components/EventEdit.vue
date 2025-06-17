@@ -4,17 +4,23 @@ import CategoriesSection from '@/components/CategoriesSection.vue'
 import ContentSection from '@/components/ContentSection.vue'
 import PhotoSection from '@/components/PhotoSection.vue'
 import type { EventInfo } from '@/types/events.ts'
-import { onMounted, ref } from 'vue'
+import { onMounted, type PropType, ref } from 'vue'
 import { useEventsStore } from '@/stores/events.ts'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import AppButton from '@/components/AppButton.vue'
-import { useAuthStore } from '@/stores/auth.ts'
 import ContactsSection from '@/components/ContactsSection.vue'
 import { useModeratorStore } from '@/stores/moderator.ts'
+import { useAuthStore } from '@/stores/auth.ts'
+
+const props = defineProps({
+  role: {
+    type: String as PropType<'moderator' | 'organizer'>,
+    required: true,
+  },
+})
 
 const moderatorStore = useModeratorStore()
-const authStore = useAuthStore()
 const eventStore = useEventsStore()
 let realId = '0'
 const currentEvent = ref<EventInfo | null>(null)
@@ -30,35 +36,43 @@ onMounted(() => {
 
 const saveEvent = () => {
   if (!currentEvent.value) return
-  /*  currentEvent.value.datetime.forEach((el) => (el.event_id = Number(realId)))*/
-  console.log(currentEvent.value)
   eventStore.updateEvent(currentEvent.value, Number(realId)).then(() => {
     if (!currentEvent.value) return
-    eventStore.uploadImage(currentEvent.value.images, Number(realId))
+    eventStore.uploadImage(currentEvent.value.images, Number(realId)).then(() => goToEvents())
   })
 }
 
 const banEvent = () => {
-  eventStore.updateEventsStatus([
-    {
-      id: Number(realId),
-      is_validated: false,
-    },
-  ])
+  eventStore
+    .updateEventsStatus([
+      {
+        id: Number(realId),
+        is_validated: false,
+      },
+    ])
+    .then(() => goToEvents())
 }
 
 const deleteEvent = () => {
-  eventStore.deleteEvent(Number(realId))
-  router.back()
+  eventStore.deleteEvent(Number(realId)).then(() => goToEvents())
 }
 
 const publishEvent = () => {
-  eventStore.updateEventsStatus([
-    {
-      id: Number(realId),
-      is_validated: true,
-    },
-  ])
+  eventStore
+    .updateEventsStatus([
+      {
+        id: Number(realId),
+        is_validated: true,
+        is_hidden: false,
+      },
+    ])
+    .then(() => goToEvents())
+}
+
+const goToEvents = () => {
+  console.log('hey')
+  if (useAuthStore().currentUser?.role != 'organizer') router.push({ name: 'events' })
+  else router.push({ name: 'organizer-events' })
 }
 </script>
 
@@ -88,19 +102,19 @@ const publishEvent = () => {
           <CategoriesSection v-model="currentEvent.types" />
         </div>
       </div>
-      <div v-if="authStore.currentUser?.role == 'organizer'" class="content-wrap__foot">
-        <AppButton @click="deleteEvent" outline danger icon>
-          <img src="/icons/delete.svg" alt="Удалить" />
-          <span>Удалить</span>
-        </AppButton>
-        <AppButton @click="saveEvent" type="button"> Сохранить</AppButton>
-      </div>
-      <div v-else class="content-wrap__foot">
-        <AppButton @click="banEvent" outline danger icon>
-          <span>Забанить</span>
-        </AppButton>
-        <AppButton @click="publishEvent" type="button"> Опубликовать</AppButton>
-      </div>
+    </div>
+    <div v-if="props.role == 'organizer'" class="content-wrap__foot">
+      <AppButton @click="deleteEvent" outline danger icon>
+        <img src="/icons/delete.svg" alt="Удалить" />
+        <span>Удалить</span>
+      </AppButton>
+      <AppButton @click="saveEvent" type="button"> Сохранить</AppButton>
+    </div>
+    <div v-if="props.role == 'moderator'" class="content-wrap__foot">
+      <AppButton @click="banEvent" outline danger icon>
+        <span>Забанить</span>
+      </AppButton>
+      <AppButton @click="publishEvent" type="button"> Опубликовать</AppButton>
     </div>
   </div>
 </template>
@@ -119,7 +133,6 @@ const publishEvent = () => {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: #fff;
     border-radius: vw(20) 0 0 0;
 
     @include one {
@@ -167,6 +180,9 @@ const publishEvent = () => {
   // .content-wrap__foot
 
   &__foot {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--color-white);
     display: flex;
     justify-content: space-between;
     padding: vw(20);

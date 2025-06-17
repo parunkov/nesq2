@@ -73,7 +73,6 @@ const chartOptions = computed(() => {
   padding: 2rem;
   background: var(--color-gray-100);
   border-radius: vw(16);
-  box-shadow: 0 vw(10) vw(25) rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 }
 

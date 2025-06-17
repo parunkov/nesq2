@@ -13,43 +13,45 @@ moderatorStore.getCitiesStatistics().then((res) => tableData.value.push(...res))
 </script>
 <template>
   <AppHeader>
-    <hi class="title">Статистика</hi>
+    <hi class="title">Статистика по городам</hi>
   </AppHeader>
   <AppTable class="event-table">
     <template #thead>
       <tr>
-        <th class="table-cell--id">
-          <div>ID</div>
+        <th class="table-cell--city">
+          <div>Город</div>
         </th>
         <th class="table-cell--active">
-          <div>Активных мероприятий</div>
+          <div>Активных</div>
         </th>
-        <th class="table-cell--top">
-          <div>Просмотры pwa/tg</div>
+        <th class="table-cell--views">
+          <div>Просмотры<br>pwa/tg</div>
         </th>
-        <th class="table-cell--user">
+        <th class="table-cell--redirect">
           <div>Переходы</div>
         </th>
-        <th class="table-cell--email">
-          <div>В избранном</div>
+        <th class="table-cell--favorite">
+          <div>Избранное</div>
         </th>
       </tr>
     </template>
     <template #tbody>
       <tr v-for="row in tableData" :key="row.id">
-        <td class="table-cell--id">
+        <td class="table-cell--city">
           {{ row.id }}
         </td>
         <td id="tr-body" class="table-cell--active">
+          <div class="mobile-text">Активных:</div>
           {{ row.events_active }}
         </td>
-        <td class="table-cell--top">
+        <td class="table-cell--views">
+          <div class="mobile-text">Статистика:</div>
           {{ row.stat_view_pwa + '/' + row.stat_view_tg }}
         </td>
-        <td class="table-cell--user">
+        <td class="table-cell--redirect">
           {{ row.stat_redirect }}
         </td>
-        <td class="table-cell--email">
+        <td class="table-cell--favorite">
           {{ row.stat_fave }}
         </td>
       </tr>
@@ -58,109 +60,50 @@ moderatorStore.getCitiesStatistics().then((res) => tableData.value.push(...res))
 </template>
 
 <style scoped lang="scss">
+tbody tr {
+  @media (max-width: 991px) {
+    min-height: vw(125, $mobile);
+    padding-top: vw(15, $mobile);
+    padding-bottom: vw(80, $mobile);
+  }
+}
+
 .table-cell {
-  &--id {
+  &--city {
     text-align: center;
-    min-width: vw(100);
+    width: vw(115);
+
+    @media (max-width: 991px) {
+      font-size: vw(22, $mobile);
+      line-height: vw(30, $mobile);
+      font-weight: 600;
+      padding: 0;
+      border: none;
+    }
   }
 
-  &--user {
-    text-align: center;
-    min-width: vw(100);
+  &--active {
+    text-align: left;
+    padding-left: vw(40);
+
+    @media (max-width: 991px) {
+      position: absolute;
+      bottom: vw(44, $mobile);
+      left: vw(20, $mobile);
+      width: vw(230, $mobile);
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: vw(39, $mobile);
+      font-size: vw(16, $mobile);
+      line-height: vw(20, $mobile);
+      color: var(--color-gray-700);
+      padding: 0;
+
+      .mobile-text {
+        width: vw(86, $mobile);
+      }
+    }
   }
-
-  &--email {
-    width: 20%;
-  }
-
-  &--title {
-    width: 30%;
-  }
-
-  &--views {
-    text-align: center;
-  }
-
-  &--redirect {
-    text-align: center;
-  }
-
-  &--favorite {
-    text-align: center;
-  }
-}
-
-.table-cell--date > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .action-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-  }
-}
-
-.controls {
-  background-color: var(--color-white);
-  border-radius: vw(20) 0 0 0;
-  padding: vw(20);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: vw(20);
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: vw(10);
-  padding: vw(10);
-  background-color: var(--color-gray-100);
-  border: vw(1) solid var(--color-gray-300);
-  border-radius: vw(10);
-  width: vw(235);
-}
-
-.create-button {
-  background-color: var(--color-primary-700);
-  color: var(--color-white);
-  border: none;
-  border-radius: vw(10);
-  padding: vw(10);
-  font-size: vw(18);
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.table-container {
-  background-color: var(--color-gray-100);
-  overflow: hidden;
-  flex: 1;
-}
-
-.event-table {
-  border-radius: vw(20) 0 0 0;
-}
-
-.header {
-  padding: vw(20);
-  border-bottom: vw(1) solid var(--color-gray-300);
-  display: flex;
-  gap: vw(10);
-}
-
-.title {
-  display: flex;
-  align-items: center;
-  gap: vw(26);
-  font-weight: 700;
-  font-size: vw(30);
-  line-height: 1.33;
-  letter-spacing: 0.01em;
-  color: var(--color-black);
 }
 </style>

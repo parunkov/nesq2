@@ -3,7 +3,7 @@ import type { EventCard, EventData, EventsFilter, EventStatus, EventInfo } from 
 import { EVENT } from '@/api/endpoints.ts'
 
 export default class EventService {
-  async addEvent(eventData: EventData): Promise<{ id: number }> {
+  async addEvent(eventData: Omit<EventData, 'images'>): Promise<{ id: number }> {
     return client.post(EVENT.ADD_EVENT, eventData)
   }
 

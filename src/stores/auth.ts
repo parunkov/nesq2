@@ -58,8 +58,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   function login(email: string, password: string) {
     return requestWrapper(isLoading, () => authService.login(email, password)).then((data) => {
+      if (data.role == 'user') throw new Error('Доступ запрещён')
       updateUserInfo(data, email)
-      return true
     })
   }
 

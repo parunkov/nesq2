@@ -36,7 +36,7 @@ export const useEventsStore = defineStore('events', () => {
       .then(() => false)
   }
 
-  async function addEvent(event: EventData) {
+  async function addEvent(event: Omit<EventData, 'images'>) {
     return requestWrapper(isLoading, () => eventService.addEvent(event))
   }
 

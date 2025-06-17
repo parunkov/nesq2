@@ -45,6 +45,7 @@ const changeRole = (id: number, newRole: string | number) => {
 
 <template>
   <header class="search-header">
+    <div class="title">Пользователи</div>
     <SearchBar v-model:active-only="showActiveOnly" v-model:search-query="searchQuery" />
   </header>
   <div class="wrapper">
@@ -58,7 +59,7 @@ const changeRole = (id: number, newRole: string | number) => {
             <div>Роль</div>
           </th>
           <th class="table-cell--name">
-            <div>Email/tg</div>
+            <div>Email/tg-name</div>
           </th>
         </tr>
       </template>
@@ -66,15 +67,14 @@ const changeRole = (id: number, newRole: string | number) => {
       <template #tbody>
         <tr v-for="user in filteredUsers" :key="user.id">
           <td class="table-cell--id">
+            <div class="mobile-text">ID:</div>
             <div>{{ user.id }}</div>
+            <div class="mobile-text mobile-text--separator">|</div>
           </td>
           <td class="table-cell--role">
             <div>
-              <AppDropDown
-                @change-value="(newRole) => changeRole(user.id, newRole.id)"
-                :start-value="user.role"
-                :options="rolesOptions"
-              />
+              <AppDropDown @change-value="(newRole) => changeRole(user.id, newRole.id)" :start-value="user.role"
+                :options="rolesOptions" />
             </div>
           </td>
           <td class="table-cell--name">
@@ -90,9 +90,23 @@ const changeRole = (id: number, newRole: string | number) => {
   background-color: var(--color-gray-100);
 }
 
+.title {
+  display: none;
+
+  @media (max-width: 991px) {
+    display: block;
+    background: var(--color-gray-100);
+    margin-bottom: vw(20, $mobile);
+  }
+}
+
 .user-table {
   box-sizing: content-box;
-  width: vw(460);
+  width: vw(510);
+
+  @media (max-width: 991px) {
+    width: 100%;
+  }
 }
 
 .search-header {
@@ -104,20 +118,63 @@ const changeRole = (id: number, newRole: string | number) => {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+
+  @media (max-width: 991px) {
+    background: var(--color-gray-100);
+    padding: 0;
+  }
+}
+
+tr {
+  @media (max-width: 991px) {
+    padding-top: vw(55, $mobile);
+    padding-bottom: vw(10, $mobile);
+    min-height: vw(105, $mobile);
+  }
 }
 
 .table-cell--id {
   text-align: center;
-  min-width: vw(100);
+  min-width: vw(60);
+
+  @media (max-width: 991px) {
+    bottom: auto;
+    top: vw(21, $mobile);
+  }
 }
 
 .table-cell--role {
-  text-align: center;
-  width: 100%;
+  width: vw(180);
+
+  @media (max-width: 991px) {
+    order: 2;
+  }
 }
 
 .table-cell--name {
-  min-width: vw(215);
-  width: 100%;
+  @media (max-width: 991px) {
+    position: absolute;
+    bottom: auto;
+    top: vw(15, $mobile);
+    left: vw(101, $mobile);
+    font-size: vw(20, $mobile);
+    line-height: vw(30, $mobile);
+    color: var(--color-gray-700);
+  }
+}
+</style>
+<style lang="scss">
+ td .dropdown__trigger.field {
+  width: vw(180);
+  background: #ffffff !important;
+
+  @media (max-width: 991px) {
+    padding: vw(2, $mobile) vw(10, $mobile) !important;
+    border-radius: vw(10, $mobile) !important;
+  }
+}
+
+.search-header {
+  background: var(--color-gray-100);
 }
 </style>

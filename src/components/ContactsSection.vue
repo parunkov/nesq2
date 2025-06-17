@@ -17,15 +17,15 @@ const contacts = defineModel<Event['contacts']>('contacts')
           <div class="form-block">
             <div class="form-item">
               <label for="" class="form-item__label">Сайт</label>
-              <AppInput v-model="contacts[0]" placeholder=" " />
+              <AppInput v-model="contacts[0]" placeholder=" " :max_length="255" />
             </div>
             <div class="form-item">
               <label for="" class="form-item__label">Телеграм</label>
-              <AppInput v-model="contacts[1]" placeholder=" " />
+              <AppInput v-model="contacts[1]" placeholder=" " :max_length="255" />
             </div>
             <div class="form-item">
               <label for="" class="form-item__label">Вотсап</label>
-              <AppInput v-model="contacts[2]" placeholder=" " />
+              <AppInput v-model="contacts[2]" placeholder=" " :max_length="255" />
             </div>
           </div>
         </div>
@@ -64,7 +64,7 @@ textarea {
     border-radius: vw(20, $mobile);
   }
 
-  +.content-card {
+  + .content-card {
     margin-top: vw(20);
 
     @media (max-width: 991px) {
@@ -74,7 +74,8 @@ textarea {
 
   // .content-card__inner
 
-  &__inner {}
+  &__inner {
+  }
 
   // .content-card__head
 
@@ -107,7 +108,8 @@ textarea {
 
   // .content-card__body
 
-  &__body {}
+  &__body {
+  }
 }
 
 .form-group {
@@ -117,13 +119,13 @@ textarea {
     padding: vw(20, $mobile);
   }
 
-  +.form-group {
+  + .form-group {
     border-top: vw(1) solid var(--color-gray-300);
   }
 }
 
 .form-block {
-  +.form-block {
+  + .form-block {
     margin-top: vw(10);
   }
 }
@@ -141,7 +143,6 @@ textarea {
 
   &__label {
     display: block;
-    margin-bottom: vw(5);
     font-weight: 500;
     font-size: vw(16);
     line-height: 1.56;

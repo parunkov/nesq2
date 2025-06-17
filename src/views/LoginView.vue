@@ -15,7 +15,9 @@ const login = () => {
   useAuthStore()
     .login(email.value, password.value)
     .then(() => {
-      router.push('/')
+      const user = useAuthStore().currentUser
+      if (user?.role === 'organizer') router.push({ name: 'organizer-events' })
+      else router.push({ name: 'events' })
     })
     .catch((err) => (error.value = err))
 }
