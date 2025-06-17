@@ -223,7 +223,6 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
   await nextTick()
   focusInput(rowIndex + 1, 'startTime')
 
-  // Если новая строка полностью заполнена — обновляем dates и эмитим
   if (isRowComplete(newRow)) {
     updateDatesAndEmit()
   }
@@ -239,7 +238,77 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
         :key="rowIndex"
         :class="`row-${rowIndex}`"
       >
-        <div class="form-date__item">
+        <!-- ORGANIZER VIEW (упрощённый ввод) -->
+        <div v-if="authStore.currentUser?.role === 'organizer'" class="form-date__item">
+          <div class="form-date__item">
+            <!-- Start Date -->
+            <div class="form-date__element form-item">
+              <label class="form-item__label">Дата начала*</label>
+              <div class="form-date__values field">
+                <input
+                  class="form-date__input form-date__input-date"
+                  type="text"
+                  placeholder="ДД.ММ"
+                  v-model="row.startDate"
+                  data-field="startDate"
+                  @input="(e) => handleInput(e, rowIndex, 'startDate', true)"
+                  @blur="() => handleBlur(rowIndex)"
+                />
+                <input
+                  class="form-date__input form-date__input-time"
+                  type="text"
+                  placeholder="ЧЧ:ММ"
+                  v-model="row.startTime"
+                  data-field="startTime"
+                  @input="(e) => handleInput(e, rowIndex, 'startTime', false)"
+                  :disabled="row.startDate.length < 5"
+                />
+              </div>
+              <p
+                v-if="row.showHint"
+                class="form-date__hint"
+                style="opacity: 1; transform: translateY(0)"
+              >
+                Введите дату начала!
+              </p>
+            </div>
+
+            <span class="form-date__item-separator"></span>
+
+            <!-- End Date -->
+            <div class="form-date__element form-item">
+              <label class="form-item__label">Дата окончания</label>
+              <div class="form-date__values field">
+                <input
+                  class="form-date__input form-date__input-date"
+                  type="text"
+                  placeholder="ДД.ММ"
+                  v-model="row.endDate"
+                  data-field="endDate"
+                  @input="(e) => handleInput(e, rowIndex, 'endDate', true)"
+                  :disabled="row.startDate.length < 5"
+                />
+                <input
+                  class="form-date__input form-date__input-time"
+                  type="text"
+                  placeholder="ЧЧ:ММ"
+                  v-model="row.endTime"
+                  data-field="endTime"
+                  @input="(e) => handleInput(e, rowIndex, 'endTime', false)"
+                  :disabled="row.startDate.length < 5"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-date__actions">
+            <MinusButton v-if="rowIndex !== 0" @click="deleteRow(rowIndex)" />
+            <AppButton mini @click="duplicateRowWithShift(rowIndex, 1)"> + День</AppButton>
+            <AppButton mini @click="duplicateRowWithShift(rowIndex, 7)"> + Неделя</AppButton>
+          </div>
+        </div>
+
+        <div v-else class="form-date__item">
           <div class="form-date__element form-item">
             <label class="form-item__label">Начало</label>
             <div class="form-date__dates">
@@ -318,19 +387,15 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
             </p>
           </div>
 
-          <div v-if="authStore.currentUser?.role == 'organizer'" class="form-date__actions">
-            <MinusButton v-if="rowIndex !== 0" @click="deleteRow(rowIndex)" />
-            <AppButton mini @click="duplicateRowWithShift(rowIndex, 1)"> + День</AppButton>
-            <AppButton mini @click="duplicateRowWithShift(rowIndex, 7)"> + Неделя</AppButton>
-          </div>
-          <div v-else class="form-date__actions">
+          <div class="form-date__actions">
             <MinusButton v-if="rowIndex !== 0" @click="deleteRow(rowIndex)" />
           </div>
         </div>
       </div>
 
+      <!-- Добавить дату (только для обычных пользователей) -->
       <div
-        v-if="authStore.currentUser?.role != 'organizer'"
+        v-if="authStore.currentUser?.role !== 'organizer'"
         class="form-date__actions"
         style="opacity: 1; transform: translateY(0)"
       >
@@ -525,6 +590,107 @@ const duplicateRowWithShift = async (rowIndex: number, days: number) => {
       height: vw(2);
       background: var(--color-danger);
       border-radius: 50%;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .button {
+    padding: vw(19, $mobile);
+    font-size: vw(18, $mobile);
+    border-radius: vw(10, $mobile);
+    border: vw(1, $mobile) solid var(--color-primary-700);
+
+    &--icon {
+      gap: vw(10, $mobile);
+    }
+  }
+
+  .form-group {
+    padding: vw(20, $mobile);
+
+    + .form-group {
+      border-top: vw(1, $mobile) solid var(--color-gray-300);
+    }
+  }
+
+  .field {
+    padding: vw(10, $mobile);
+    border: vw(1, $mobile) solid var(--color-gray-300);
+    border-radius: vw(10, $mobile);
+    font-size: vw(18, $mobile);
+
+    &--textarea {
+      min-height: vw(120, $mobile);
+    }
+
+    &::placeholder {
+      font-size: inherit;
+    }
+  }
+
+  .form-date {
+    &__dates {
+      gap: vw(5, $mobile);
+    }
+
+    &__row {
+      gap: vw(10, $mobile);
+    }
+
+    &__row + &__row {
+      margin-top: vw(20, $mobile);
+    }
+
+    &__item {
+      gap: vw(10, $mobile);
+    }
+
+    &__element {
+      max-width: vw(205, $mobile);
+    }
+
+    &__hint {
+      font-size: vw(10, $mobile);
+      margin-top: vw(2, $mobile);
+    }
+
+    &__values {
+      gap: vw(5, $mobile);
+    }
+
+    &__input {
+      width: 5ch;
+
+      &::placeholder {
+        font-size: inherit;
+      }
+    }
+
+    &__item-separator {
+      height: vw(1, $mobile);
+      width: vw(10, $mobile);
+      margin: vw(20, $mobile) 0;
+    }
+
+    &__actions {
+      gap: vw(10, $mobile);
+      margin-top: vw(20, $mobile);
+    }
+
+    &__add-day-btn,
+    &__remove-btn {
+      padding: vw(10, $mobile);
+    }
+
+    &__remove-btn {
+      height: vw(24, $mobile);
+      width: vw(24, $mobile);
+
+      &::before {
+        width: vw(14, $mobile);
+        height: vw(2, $mobile);
+      }
     }
   }
 }

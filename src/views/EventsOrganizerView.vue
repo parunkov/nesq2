@@ -172,7 +172,6 @@ const editEvent = (id: number) => router.push({ name: 'organizer-event-edit', pa
   font-size: vw(15);
   font-weight: 500;
   line-height: vw(20);
-  background-color: var(--color-gray-2);
 
   th {
     border: vw(1) solid var(--color-gray-3);

@@ -35,6 +35,7 @@
   --color-gray-4: #DFDDE0;
   --color-gray-5: #F9F5FF;
   --color-gray-6: #F2F4F7;
+  --color-gray-7: #F2ECF4;
   --color-primary-1: #7F56D9;
 }
 
@@ -115,4 +116,8 @@ input {
   all: unset;
   display: block;
   cursor: pointer;
+}
+
+strong {
+  font-weight: bolder;
 }

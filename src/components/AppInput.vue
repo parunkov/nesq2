@@ -89,13 +89,6 @@ watch(
     border-color: var(--color-danger);
   }
 
-  @media (max-width: 991px) {
-    padding: vw(15, $mobile) vw(20, $mobile);
-    border-radius: vw(15, $mobile);
-    font-size: vw(20, $mobile);
-    line-height: vw(30, $mobile);
-  }
-
   &::placeholder {
     color: var(--color-gray-700);
     font-size: inherit;
@@ -109,11 +102,37 @@ watch(
   &--textarea {
     min-height: vw(120);
   }
+
+  @media (max-width: 991px) {
+    padding: vw(15, $mobile) vw(20, $mobile);
+    border-radius: vw(15, $mobile);
+    font-size: vw(20, $mobile);
+    line-height: vw(30, $mobile);
+
+    &--textarea {
+      min-height: vw(120, $mobile);
+    }
+  }
 }
 
 .field-error {
   margin-top: vw(4);
   font-size: vw(14);
   color: var(--color-danger);
+
+  @media (max-width: 991px) {
+    margin-top: vw(4, $mobile);
+    font-size: vw(14, $mobile);
+  }
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
 }
 </style>

@@ -165,7 +165,7 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
     <template #tbody>
       <template v-for="(group, groupIndex) in eventsByModerationTime" :key="groupIndex">
         <tr class="sub-header">
-          <td colspan="6">
+          <td class="sub-header-cell" colspan="6">
             <div>{{ group.hours }}</div>
           </td>
         </tr>
@@ -241,7 +241,6 @@ const isHiddenChange = (row: EventCard, newValue: boolean) => {
   font-size: vw(15);
   font-weight: 500;
   line-height: vw(20);
-  background-color: var(--color-gray-2);
 
   th {
     border: vw(1) solid var(--color-gray-3);

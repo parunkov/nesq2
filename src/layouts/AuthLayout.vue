@@ -12,5 +12,6 @@
   align-self: center;
   align-items: center;
   justify-self: center;
+  justify-content: center;
 }
 </style>

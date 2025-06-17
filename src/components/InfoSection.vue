@@ -217,39 +217,66 @@ const updateDates = (datesData: Event['datetime']) => {
   }
 }
 
-.field {
-  display: block;
-  width: 100%;
-  padding: vw(10);
-  border: vw(1) solid var(--color-gray-300);
-  border-radius: vw(10);
-  font-weight: 400;
-  font-size: vw(18);
-  line-height: 1.11;
-  color: var(--color-black);
-  background: var(--color-gray-100);
-
-  transition:
-    border-color 0.33s ease,
-    background 0.33s ease;
-
-  &::placeholder {
-    color: var(--color-gray-700);
-    font-size: inherit;
-  }
-
-  &:focus,
-  &:has(input:focus) {
-    border-color: var(--color-primary-700);
-  }
-
-  &--textarea {
-    min-height: vw(120);
-  }
-}
-
 :is(input, textarea).field:not(:placeholder-shown),
 .field:has(input:not(:placeholder-shown)) {
   background: var(--color-white);
+}
+
+@media (max-width: 991px) {
+  .content-card {
+    box-shadow: 0 vw(5, $mobile) vw(15, $mobile) 0 rgba(39, 18, 47, 0.1);
+    border-radius: vw(20, $mobile);
+
+    + .content-card {
+      margin-top: vw(20, $mobile);
+    }
+
+    &__head {
+      padding: vw(10, $mobile) vw(20, $mobile);
+      border-radius: vw(20, $mobile) vw(20, $mobile) 0 0;
+    }
+
+    &__title {
+      font-size: vw(18, $mobile);
+    }
+  }
+
+  .form-group {
+    + .form-group {
+      border-top: vw(1, $mobile) solid var(--color-gray-300);
+    }
+  }
+
+  .form-item {
+    &__label {
+      margin-bottom: vw(5, $mobile);
+      font-size: vw(16, $mobile);
+    }
+  }
+
+  .dropdown {
+    &__trigger {
+      gap: vw(10, $mobile);
+    }
+
+    &__content {
+      padding-top: vw(8, $mobile);
+    }
+
+    &__select-native {
+      width: vw(1, $mobile);
+      height: vw(1, $mobile);
+      margin: vw(-1, $mobile);
+    }
+  }
+
+  .dropdown-list {
+    border: vw(1, $mobile) solid var(--color-gray-300);
+    border-radius: vw(10, $mobile);
+
+    &__item {
+      padding: vw(10, $mobile);
+    }
+  }
 }
 </style>

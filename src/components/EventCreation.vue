@@ -150,6 +150,8 @@ const goToEvents = () => {
     border-bottom: vw(1) solid var(--color-gray-300);
     display: flex;
     gap: vw(10);
+    background-color: var(--color-white);
+    border-radius: vw(20) 0 0 0;
 
     @media (max-width: 991px) {
       background-color: var(--color-gray-100);

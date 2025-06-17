@@ -110,7 +110,7 @@ const goToEvents = () => {
       </AppButton>
       <AppButton @click="saveEvent" type="button"> Сохранить</AppButton>
     </div>
-    <div v-if="props.role == 'moderator'" class="content-wrap__foot">
+    <div v-else class="content-wrap__foot">
       <AppButton @click="banEvent" outline danger icon>
         <span>Забанить</span>
       </AppButton>
@@ -147,6 +147,8 @@ const goToEvents = () => {
     border-bottom: vw(1) solid var(--color-gray-300);
     display: flex;
     gap: vw(10);
+    background-color: var(--color-white);
+    border-radius: vw(20) 0 0 0;
   }
 
   // .content-wrap__title
@@ -159,7 +161,7 @@ const goToEvents = () => {
     font-size: vw(30);
     line-height: 1.33;
     letter-spacing: 0.01em;
-    color: #000;
+    color: var(--color-black);
     margin-left: vw(20);
   }
 

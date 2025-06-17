@@ -179,6 +179,40 @@ watch(
     color: var(--color-gray-900);
     user-select: none;
   }
+
+  @media (max-width: 991px) {
+    &__label {
+      gap: vw(10, $mobile);
+    }
+
+    &__checkbox:checked + &__decor::before {
+      left: calc(100% - vw(27, $mobile));
+    }
+
+    &__decor {
+      width: vw(54, $mobile);
+      height: vw(30, $mobile);
+      border-radius: vw(18, $mobile);
+
+      &::before {
+        top: vw(3, $mobile);
+        left: vw(3, $mobile);
+        width: vw(24, $mobile);
+        height: vw(24, $mobile);
+        box-shadow:
+          0 vw(1, $mobile) vw(3, $mobile) 0 rgba(16, 24, 40, 0.06),
+          0 vw(1, $mobile) vw(4, $mobile) 0 rgba(16, 24, 40, 0.1);
+      }
+    }
+
+    &__caption {
+      font-size: vw(18);
+
+      @media (max-width: 991px) {
+        font-size: vw(18, $mobile);
+      }
+    }
+  }
 }
 
 :is(input, textarea).field:not(:placeholder-shown),
@@ -192,11 +226,17 @@ watch(
   + .form-group {
     border-top: vw(1) solid var(--color-gray-300);
   }
+
+  @media (max-width: 991ox) {
+    padding: vw(20, $mobile);
+
+    + .form-group {
+      border-top: vw(1, $mobile) solid var(--color-gray-300);
+    }
+  }
 }
 
 .form-item {
-  // .form-block__label
-
   &__label {
     display: block;
     margin-bottom: vw(5);
@@ -204,12 +244,15 @@ watch(
     font-size: vw(16);
     line-height: 1.56;
     color: var(--color-gray-900);
+
+    @media (max-width: 991px) {
+      margin-bottom: vw(5, $mobile);
+      font-size: vw(16, $mobile);
+    }
   }
 }
 
 .form-price {
-  // .form-price__values
-
   &__values {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -272,6 +315,34 @@ watch(
   // .form-price__alert
 
   &__alert {
+  }
+
+  @media (max-width: 991px) {
+    &__values {
+      gap: vw(20, $mobile);
+    }
+
+    @include one {
+      grid-template-columns: vw(200, $mobile);
+    }
+
+    &__value {
+      padding: vw(19, $mobile) vw(14, $mobile);
+    }
+
+    &__caption {
+      width: vw(20, $mobile);
+      margin-right: vw(5, $mobile);
+      font-size: vw(20, $mobile);
+    }
+
+    &__input {
+      margin-right: vw(10, $mobile);
+    }
+
+    &__free-checkbox {
+      margin-top: vw(15, $mobile);
+    }
   }
 }
 </style>

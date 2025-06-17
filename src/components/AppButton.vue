@@ -58,6 +58,22 @@ const classes = computed(() => ({
     height: min-content;
     width: min-content;
     white-space: nowrap;
+    align-self: center;
+  }
+
+  @media (max-width: 991px) {
+    padding: vw(19, $mobile);
+    font-size: vw(18, $mobile);
+    border-radius: vw(10, $mobile);
+    border-width: vw(1, $mobile);
+
+    &--icon {
+      gap: vw(10, $mobile);
+    }
+
+    &--mini {
+      padding: vw(10, $mobile);
+    }
   }
 }
 </style>
